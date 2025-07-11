@@ -6,7 +6,7 @@
   <name>ESPAdapters</name>
   <groupId>io.jexxa.esp</groupId>
   <artifactId>esp-adapters</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <url>https://github.com/jexxa-projects/ESPAdapters</url>
@@ -17,7 +17,7 @@
     <connection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</connection>
     <url>https://github.com/jexxa-projects/ESPAdapters</url>
     <developerConnection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</developerConnection>
-    <tag>esp-adapters-0.1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
 
