@@ -25,7 +25,11 @@
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.simple.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.jexxa.common</groupId>
+            <artifactId>common-adapters</artifactId>
+            <version>${io.jexxa.common-adapters}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
@@ -39,6 +43,14 @@
         </dependency>
 
         <!-- Dependencies required for tests -->
+        <!-- Testcontainers Kafka -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>1.21.3</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>

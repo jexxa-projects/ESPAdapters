@@ -38,6 +38,7 @@
 
     <!-- version of dependencies -->
     <slf4j.simple.version>2.0.17</slf4j.simple.version>
+    <io.jexxa.common-adapters>2.1.7</io.jexxa.common-adapters>
     <kafka.clients.version>8.0.0-ce</kafka.clients.version>
     <kafka.json.schema.serializer>8.0.0</kafka.json.schema.serializer>
 
@@ -77,6 +78,7 @@
     <maven.shade.plugin>3.6.0</maven.shade.plugin>
     <maven.exec.plugin>3.5.1</maven.exec.plugin>
     <maven.central.publishing.plugin>0.8.0</maven.central.publishing.plugin>
+    <maven.compiler.release>17</maven.compiler.release>
 
   </properties>
 
@@ -496,29 +498,6 @@
               </execution>
             </executions>
           </plugin>
-
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.exec.plugin}</version>
-            <executions>
-              <execution>
-                <id>pre-integration-test</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>${java.home}/bin/java</executable>
-                  <async>true</async>
-                  <commandlineArgs>
-                    ${context.command.start}
-                  </commandlineArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
 
         </plugins>
       </build>
