@@ -504,6 +504,12 @@
     </profile>
 
   </profiles>
+  <repositories>
+    <repository>
+      <id>confluent</id>
+      <url>https://packages.confluent.io/maven</url>
+    </repository>
+  </repositories>
   <modules>
     <module>esp-adapters-core</module>
     <module>esp-adapters-test</module>
