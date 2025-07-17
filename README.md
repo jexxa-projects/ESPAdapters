@@ -26,7 +26,7 @@ Maven:
     <dependency>
        <groupId>io.jexxa.esp</groupId>
        <artifactId>esp-adapters-core</artifactId>
-       <version>0.1.0</version>
+       <version>0.2.0</version>
     </dependency>
     
 </dependencies>
@@ -35,6 +35,6 @@ Maven:
 Gradle:
 
 ```groovy
-compile "io.jexxa.esp:esp-adapters:0.1.0"
+compile "io.jexxa.esp:esp-adapters:0.2.0"
 ``` 
 
