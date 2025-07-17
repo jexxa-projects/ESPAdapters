@@ -40,6 +40,18 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-json-schema-serializer</artifactId>
             <version>${kafka.json.schema.serializer}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons.lang3}</version>
         </dependency>
 
         <!-- Dependencies required for tests -->
