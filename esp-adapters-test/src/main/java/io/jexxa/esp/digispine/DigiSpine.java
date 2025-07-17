@@ -1,22 +1,31 @@
 package io.jexxa.esp.digispine;
 
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.jexxa.common.facade.logger.SLF4jLogger;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 public class DigiSpine {
-    private final KafkaContainer kafkaBroker;
+    private final KafkaContainer kafkaBroker;//Conflunce-Kafka funktioniert mit SchemaRegistry nicht
     private final GenericContainer<?> schemaRegistry;
     private final Properties kafkaProperties;
 
@@ -103,5 +112,72 @@ public class DigiSpine {
             throw new RuntimeException(e);
         }
     }
+
+    public List<String> messages(String topic, Duration duration)
+    {
+        return receiveGenericMessage(consumerPropertiesText(),topic, duration);
+    }
+
+    public <T> List<T> messagesFromJSON(String topic, Duration duration, Class<T> valueType)
+    {
+        return receiveGenericMessage(consumerPropertiesJSON(valueType),topic, duration);
+    }
+
+
+    public Optional<String> latestMessage(String topic, Duration duration)
+    {
+        var result = messages(topic, duration);
+        if (result.isEmpty())
+        {
+            return Optional.empty();
+        }
+        return Optional.of(result.get(result.size()-1));
+    }
+
+    public <T> Optional<T> latestMessageFromJSON(String topic, Duration duration, Class<T> valueType)
+    {
+        var result = messagesFromJSON(topic, duration, valueType);
+        if (result.isEmpty())
+        {
+            return Optional.empty();
+        }
+        return Optional.of(result.get(result.size()-1));
+    }
+
+    private static <T> List<T> receiveGenericMessage(Properties consumerProps, String topic, Duration duration)
+    {
+        List<T> result = new ArrayList<>();
+
+        try (KafkaConsumer<String, T> consumer = new KafkaConsumer<>(consumerProps)) {
+            consumer.subscribe(Collections.singletonList(topic));
+            ConsumerRecords<String, T> records = consumer.poll(duration);
+            records.forEach(element -> result.add(element.value()));
+        }
+        return result;
+    }
+
+    private <T> Properties consumerPropertiesJSON(Class<T> clazz)
+    {
+        Properties consumerProperties = kafkaProperties();
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        consumerProperties.put("json.value.type", clazz.getName());
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "DigiSpineJSON");
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return consumerProperties;
+    }
+
+    private Properties consumerPropertiesText()
+    {
+        Properties consumerProperties = kafkaProperties();
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "DigiSpineJSON");
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return consumerProperties;
+    }
+
 
 }
