@@ -89,6 +89,16 @@ public class DigiSpine {
             throw new RuntimeException(e);
         }
     }
+
+
+    public boolean topicExist(String topic){
+        try (AdminClient admin = AdminClient.create(Collections.singletonMap(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers()))) {
+            return admin.listTopics().names().get().contains(topic ) ;
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @SuppressWarnings("unused")
     public void deleteTopic(String topic){
         try (AdminClient admin = AdminClient.create(Collections.singletonMap(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers()))) {
