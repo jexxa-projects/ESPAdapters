@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.createTopic;
+import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.topicExists;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,6 +62,7 @@ class KafkaPoolTest {
         createTopic(filterProperties, testTopic, 1, 1);
 
         //Assert
+        assertTrue(topicExists(filterProperties, testTopic));
         assertTrue(DIGI_SPINE.topicExist(testTopic));
     }
 

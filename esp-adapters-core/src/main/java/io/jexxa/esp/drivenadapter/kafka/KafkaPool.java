@@ -62,9 +62,20 @@ public class KafkaPool {
         createTopic(properties, topic, 1, 3);
     }
 
+    public static boolean topicExists(Properties properties, String topic) {
+        var adminClientProperties = getAdminClientProperties(properties);
+        try (AdminClient admin = AdminClient.create(adminClientProperties)) {
+            return topicExists(admin, topic);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
+        } catch (ExecutionException e){
+            throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
+        }
+    }
+
     public static void createTopic(Properties properties, String topic, int numPartitions, int replicationFactor)
     {
-        validateKafkaConnection(properties);
         var broker = properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG);
         var adminClientProperties = getAdminClientProperties(properties);
 
