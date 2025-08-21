@@ -1,6 +1,5 @@
 package io.jexxa.esp.drivenadapter.kafka;
 
-import io.jexxa.common.facade.logger.SLF4jLogger;
 import io.jexxa.esp.digispine.DigiSpine;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,26 +32,24 @@ class KafkaESPProducerTest {
 
     @Test
     void sendAsJSON() {
+        //Arrange
+        var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
-        SLF4jLogger.getLogger(KafkaESPProducerTest.class).warn("Hello");
-            //Arrange
-            var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
+        var objectUnderTest = kafkaESPProducer( String.class,
+                KafkaTestMessage.class,
+                DIGI_SPINE.kafkaProperties());
 
-            var objectUnderTest = kafkaESPProducer( String.class,
-                    KafkaTestMessage.class,
-                    DIGI_SPINE.kafkaProperties());
+        //Act
+        objectUnderTest
+                .send("test", expectedResult)
+                .withTimestamp(now())
+                .toTopic(TEST_JSON_TOPIC)
+                .asJSON();
 
-            //Act
-            objectUnderTest
-                    .send("test", expectedResult)
-                    .withTimestamp(now())
-                    .toTopic(TEST_JSON_TOPIC)
-                    .asJSON();
+        var result = DIGI_SPINE.latestMessageFromJSON(TEST_JSON_TOPIC, Duration.ofMillis(500), KafkaTestMessage.class);
 
-            var result = DIGI_SPINE.latestMessageFromJSON(TEST_JSON_TOPIC, Duration.ofMillis(500), KafkaTestMessage.class);
-
-            assertTrue(result.isPresent());
-            assertEquals(expectedResult, result.get());
+        assertTrue(result.isPresent());
+        assertEquals(expectedResult, result.get());
     }
 
 
