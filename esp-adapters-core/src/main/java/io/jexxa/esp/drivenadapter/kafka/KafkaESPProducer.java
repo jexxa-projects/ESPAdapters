@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import io.jexxa.esp.drivenadapter.ESPProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 
 import java.util.Properties;
 
@@ -27,20 +28,20 @@ public class KafkaESPProducer<K,V> extends ESPProducer<K,V> {
     }
 
     @Override
-    protected void sendAsJSON(K key, V eventData, String topic, Long timestamp) {
+    protected void sendAsJSON(K key, V eventData, String topic, Long timestamp, Properties headers) {
         setSerializerIfAbsent(KafkaJsonSchemaSerializer.class);
-        internalSend(key, eventData, topic, timestamp);
+        internalSend(key, eventData, topic, timestamp, headers);
     }
 
     @Override
-    protected void sendAsAVRO(K key, V eventData, String topic, Long timestamp) {
+    protected void sendAsAVRO(K key, V eventData, String topic, Long timestamp, Properties headers) {
         //Not implemented yet
     }
 
     @Override
-    protected void sendAsText(K key, V eventData, String topic, Long timestamp) {
+    protected void sendAsText(K key, V eventData, String topic, Long timestamp, Properties headers) {
         setSerializerIfAbsent(GenericStringSerializer.class);
-        internalSend(key, eventData, topic, timestamp);
+        internalSend(key, eventData, topic, timestamp, headers);
     }
 
     private <T> void setSerializerIfAbsent(Class<T> clazz)
@@ -56,10 +57,16 @@ public class KafkaESPProducer<K,V> extends ESPProducer<K,V> {
         );
     }
 
-    private void internalSend(K key, V eventData, String topic, Long timestamp)
+    private void internalSend(Object key, Object eventData, String topic, Long timestamp, Properties headers)
     {
         var producer = kafkaProducer(filterProperties);
-        producer.send(new ProducerRecord<>(topic, null, timestamp, key, eventData));
+        var producerRecord = new ProducerRecord<>(topic, null, timestamp, key, eventData);
+
+        headers.forEach( (hKey, hValue) -> producerRecord.headers().add(
+                new RecordHeader((String)hKey, ((String)hValue).getBytes()))
+        );
+
+        producer.send(producerRecord);
         producer.flush();
     }
 

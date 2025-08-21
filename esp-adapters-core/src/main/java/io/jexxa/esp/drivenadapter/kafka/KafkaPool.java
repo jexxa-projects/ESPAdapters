@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
-@SuppressWarnings("java:S6548")
+@SuppressWarnings({"java:S6548"})
 public class KafkaPool {
     @SuppressWarnings("unused")
     private static final KafkaPool INSTANCE = new KafkaPool();

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -48,8 +49,34 @@ class KafkaESPProducerTest {
 
         var result = DIGI_SPINE.latestMessageFromJSON(TEST_JSON_TOPIC, Duration.ofMillis(500), KafkaTestMessage.class);
 
+        //Assert
         assertTrue(result.isPresent());
         assertEquals(expectedResult, result.get());
+    }
+
+    @Test
+    void sendJSONWithHeader() {
+        //Arrange
+        var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
+
+        var objectUnderTest = kafkaESPProducer( String.class,
+                KafkaTestMessage.class,
+                DIGI_SPINE.kafkaProperties());
+
+        //Act
+        objectUnderTest
+                .send("test", expectedResult)
+                .withTimestamp(now())
+                .addHeader("header", "value")
+                .toTopic(TEST_JSON_TOPIC)
+                .asJSON();
+
+        var result = DIGI_SPINE.latestRecord(TEST_JSON_TOPIC, Duration.ofMillis(500), String.class, KafkaTestMessage.class);
+
+        //Assert
+        assertTrue(result.isPresent());
+        assertEquals(expectedResult, result.get().value());
+        assertEquals("value" ,new String(result.get().headers().lastHeader("header").value(), StandardCharsets.UTF_8));
     }
 
 
@@ -71,6 +98,7 @@ class KafkaESPProducerTest {
 
         var result = DIGI_SPINE.latestMessage(TEST_TEXT_TOPIC, Duration.ofMillis(500));
 
+        //Assert
         assertTrue(result.isPresent());
         assertEquals(expectedResult.toString(), result.get());
     }

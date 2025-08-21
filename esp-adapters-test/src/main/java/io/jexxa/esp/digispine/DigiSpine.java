@@ -6,6 +6,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -28,6 +29,8 @@ public class DigiSpine {
     private final KafkaContainer kafkaBroker;//Conflunce-Kafka funktioniert mit SchemaRegistry nicht
     private final GenericContainer<?> schemaRegistry;
     private final Properties kafkaProperties;
+    private static final String CONSUMER_GROUP_ID = "DigiSpineJSON";
+    private static final String OFFSET_RESET = "earliest";
 
 
     public DigiSpine()
@@ -45,7 +48,7 @@ public class DigiSpine {
                 .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://kafka:9092")
                 .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")
                 .withEnv("SCHEMA_REGISTRY_LISTENERS", "http://0.0.0.0:8081")
-                .withExposedPorts(8081)
+                .withExposedPorts(Integer.valueOf(8081))
                 .waitingFor(Wait.forHttp("/subjects"));
         schemaRegistry.start();
 
@@ -85,8 +88,11 @@ public class DigiSpine {
             } else {
                 SLF4jLogger.getLogger(DigiSpine.class).warn("Topic {} already exist", topic);
             }
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (ExecutionException  e) {
+            throw new IllegalArgumentException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -94,8 +100,11 @@ public class DigiSpine {
     public boolean topicExist(String topic){
         try (AdminClient admin = AdminClient.create(Collections.singletonMap(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers()))) {
             return admin.listTopics().names().get().contains(topic ) ;
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (ExecutionException  e) {
+            throw new IllegalArgumentException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -108,8 +117,11 @@ public class DigiSpine {
             } else {
                 SLF4jLogger.getLogger(DigiSpine.class).warn("Topic {} does not exist", topic);
             }
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        }catch (ExecutionException  e) {
+            throw new IllegalArgumentException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -118,8 +130,11 @@ public class DigiSpine {
             //Do not delete system topics starting with the leading '_'
             var topics = admin.listTopics().names().get().stream().filter( element -> !element.startsWith("_")).toList();
             admin.deleteTopics(topics);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (ExecutionException  e) {
+            throw new IllegalArgumentException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -133,6 +148,14 @@ public class DigiSpine {
         return receiveGenericMessage(consumerPropertiesJSON(valueType),topic, duration);
     }
 
+    public <K,V> Optional<ConsumerRecord<K,V>> latestRecord(String topic, Duration duration, Class<K> keyType, Class<V> valueType)
+    {
+        List<ConsumerRecord<K, V>> result = receiveGenericRecord(consumerPropertiesJSON(keyType, valueType),topic,duration);
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(result.get(0));
+    }
 
     public Optional<String> latestMessage(String topic, Duration duration)
     {
@@ -166,14 +189,39 @@ public class DigiSpine {
         return result;
     }
 
+
+    private static <K, V> List<ConsumerRecord<K,V>> receiveGenericRecord(Properties consumerProps, String topic, Duration duration)
+    {
+        List<ConsumerRecord<K,V>> result = new ArrayList<>();
+
+        try (KafkaConsumer<K, V> consumer = new KafkaConsumer<>(consumerProps)) {
+            consumer.subscribe(Collections.singletonList(topic));
+            ConsumerRecords<K, V> records = consumer.poll(duration);
+            records.forEach(result::add);
+        }
+        return result;
+    }
+
     private <T> Properties consumerPropertiesJSON(Class<T> clazz)
     {
         Properties consumerProperties = kafkaProperties();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put("json.value.type", clazz.getName());
-        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "DigiSpineJSON");
-        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFSET_RESET);
+
+        return consumerProperties;
+    }
+    private <K,V> Properties consumerPropertiesJSON(Class<K> clazzKey, Class<V> clazzValue)
+    {
+        Properties consumerProperties = kafkaProperties();
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        consumerProperties.put("json.value.type", clazzValue.getName());
+        consumerProperties.put("json.value.key", clazzKey.getName());
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFSET_RESET);
 
         return consumerProperties;
     }
@@ -183,8 +231,8 @@ public class DigiSpine {
         Properties consumerProperties = kafkaProperties();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "DigiSpineJSON");
-        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFSET_RESET);
 
         return consumerProperties;
     }

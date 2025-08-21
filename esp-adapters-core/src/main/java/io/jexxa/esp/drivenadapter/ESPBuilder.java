@@ -3,6 +3,7 @@ package io.jexxa.esp.drivenadapter;
 import io.jexxa.common.facade.utils.annotation.CheckReturnValue;
 
 import java.time.Instant;
+import java.util.Properties;
 
 import static java.util.Objects.requireNonNull;
 
@@ -10,6 +11,7 @@ public class ESPBuilder<K,V> {
     private final K key;
     private final V event;
     private final ESPProducer<K,V> espProducer;
+    private final Properties headers = new Properties();
 
     private Long timestamp = null;
     private String topic;
@@ -36,24 +38,32 @@ public class ESPBuilder<K,V> {
         return this;
     }
 
+    @CheckReturnValue
+    public ESPBuilder<K,V>  addHeader(String key, String value)
+    {
+        headers.put(key, value);
+
+        return this;
+    }
+
     public void asJSON(){
         espProducer.sendAsJSON(key,
                 event,
                 requireNonNull(topic),
-                timestamp);
+                timestamp, headers);
     }
 
     public void asAVRO(){
         espProducer.sendAsAVRO(key,
                 event,
                 requireNonNull(topic),
-                timestamp);
+                timestamp, headers);
     }
 
     public void asText(){
         espProducer.sendAsText(key,
                 event,
                 requireNonNull(topic),
-                timestamp);
+                timestamp, headers);
     }
 }
