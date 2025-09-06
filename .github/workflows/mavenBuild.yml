@@ -12,25 +12,14 @@ jobs:
     name: Maven-Build (Linux)
     runs-on: ubuntu-latest
 
-    # Service containers to run with `runner-job`
-    services:
-      activemq:
-        image: quay.io/artemiscloud/activemq-artemis-broker:latest
-        ports:
-          - 61616:61616
-        env:
-          AMQ_USER: admin
-          AMQ_PASSWORD: admin
-
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_PASSWORD: admin
-          POSTGRES_USER: postgres
-
     steps:
+      - name: Start Kafka
+        uses: 280780363/kafka-action@v1.0
+        with:
+          kafka version: "latest" # Optional, kafka version
+          kafka port: 9092 # Optional, kafka port
+          auto create topic: "true" # Optional, auto create kafka topic
+
       - uses: actions/checkout@v5
       - name: Set up JDK 17
         uses: actions/setup-java@v5
