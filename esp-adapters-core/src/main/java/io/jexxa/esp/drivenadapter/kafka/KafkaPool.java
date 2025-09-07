@@ -34,6 +34,7 @@ public class KafkaPool {
 
     public void cleanup()
     {
+        SLF4jLogger.getLogger(KafkaPool.class).debug("Flush and close open producer");
         producerMap.values().forEach(KafkaProducer::flush);
         producerMap.values().forEach(KafkaProducer::close);
         producerMap.clear();
@@ -139,6 +140,7 @@ public class KafkaPool {
     private KafkaPool()
     {
         JexxaContext.registerCleanupHandler(this::cleanup);
+        JexxaContext.registerValidationHandler(KafkaPool::validateKafkaConnection);
     }
 
 

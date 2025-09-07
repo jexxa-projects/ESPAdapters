@@ -67,7 +67,6 @@ public class KafkaESPProducer<K,V> extends ESPProducer<K,V> {
         );
 
         producer.send(producerRecord);
-        producer.flush();
     }
 
 }
