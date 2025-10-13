@@ -1,26 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-
   <name>ESPAdapters</name>
   <groupId>io.jexxa.esp</groupId>
   <artifactId>esp-adapters</artifactId>
   <version>0.5.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-
   <url>https://github.com/jexxa-projects/ESPAdapters</url>
-
   <description>ESPAdapters - Adapters for Event Stream Processing in Jexxa and JLegMed</description>
-
   <scm>
     <connection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</connection>
     <url>https://github.com/jexxa-projects/ESPAdapters</url>
     <developerConnection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</developerConnection>
     <tag>esp-adapters-0.5.0</tag>
   </scm>
-
-
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -33,30 +25,27 @@
       <name>Michael Repplinger</name>
     </developer>
   </developers>
-
   <properties>
-
     <!-- version of dependencies -->
     <slf4j.simple.version>2.0.17</slf4j.simple.version>
     <io.jexxa.common-adapters>2.4.0</io.jexxa.common-adapters>
     <kafka.clients.version>8.0.0-ce</kafka.clients.version>
     <kafka.json.schema.serializer>8.0.0</kafka.json.schema.serializer>
     <apache.commons.lang3>3.19.0</apache.commons.lang3>
-
     <!-- version of test dependencies -->
-    <junit.platform.launcher.version>1.13.4</junit.platform.launcher.version>
-    <junit.jupiter.engine.version>5.13.4</junit.jupiter.engine.version>
-    <junit.jupiter.params.version>5.13.4</junit.jupiter.params.version>
+    <junit.platform.launcher.version>6.0.0</junit.platform.launcher.version>
+    <junit.jupiter.engine.version>6.0.0</junit.jupiter.engine.version>
+    <junit.jupiter.params.version>6.0.0</junit.jupiter.params.version>
+
+      <jlegmed.core.version>4.4.0</jlegmed.core.version>
+
     <awaitility.version>4.3.0</awaitility.version>
     <unirest.java.version>3.14.5</unirest.java.version>
-
     <!-- server-name used in mavens settings.xml to find to your repository credentials -->
     <project.scm.id>github</project.scm.id>
-
     <!--information for filtered sources  -->
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssZ</maven.build.timestamp.format>
-
     <!--version of  maven plugins  -->
     <gpg.plugin.version>3.2.8</gpg.plugin.version>
     <maven.clean.plugin>3.5.0</maven.clean.plugin>
@@ -80,17 +69,15 @@
     <maven.exec.plugin>3.5.1</maven.exec.plugin>
     <maven.central.publishing.plugin>0.9.0</maven.central.publishing.plugin>
     <maven.compiler.release>17</maven.compiler.release>
-
   </properties>
-
-
   <!-- ************************************************************************** -->
   <!-- IMPORTANT: Change the following lines only if you are familiar with maven  -->
   <!-- IMPORTANT: If you really need to adjust the following lines, please check      -->
   <!-- IMPORTANT: if you should start your maven project.                         -->
   <!-- ************************************************************************** -->
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults -->
+    <pluginManagement>
+      <!-- lock down plugins versions to avoid using Maven defaults -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
@@ -154,7 +141,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
     <resources>
       <resource>
         <directory>esp-adapters-core/src/main/resources</directory>
@@ -162,7 +148,6 @@
       </resource>
     </resources>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -189,7 +174,6 @@
           <release>${maven.compiler.release}</release>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
@@ -208,7 +192,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -217,7 +200,6 @@
           <argLine>${surefireArgLine}</argLine>
         </configuration>
       </plugin>
-
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
@@ -225,7 +207,6 @@
           <arguments>-Psign-artifacts</arguments>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -311,7 +292,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
@@ -326,7 +306,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -347,7 +326,6 @@
         </configuration>
       </plugin>
     </plugins>
-
   </build>
   <profiles>
     <profile>
@@ -366,7 +344,6 @@
               <!-- Property surefireArgLine wird vom maven-failsafe-plugin gesetzt-->
               <argLine>${failsafeArgLine}</argLine>
               <shutdown>kill</shutdown>
-
             </configuration>
             <executions>
               <execution>
@@ -378,8 +355,6 @@
               </execution>
             </executions>
           </plugin>
-
-
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -421,7 +396,6 @@
                   <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
                 </configuration>
               </execution>
-
               <execution>
                 <id>pre-integration-test</id>
                 <phase>pre-integration-test</phase>
@@ -499,11 +473,9 @@
               </execution>
             </executions>
           </plugin>
-
         </plugins>
       </build>
     </profile>
-
   </profiles>
   <repositories>
     <repository>
@@ -514,7 +486,6 @@
   <modules>
     <module>esp-adapters-core</module>
     <module>esp-adapters-test</module>
-
+    <module>esp-jlegmed</module>
   </modules>
-
 </project>
