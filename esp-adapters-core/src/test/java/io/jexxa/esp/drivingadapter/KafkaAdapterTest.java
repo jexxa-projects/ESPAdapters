@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.jexxa.esp.digispine.DigiSpine;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,8 +43,6 @@ class KafkaAdapterTest {
         Properties consumerProperties = DIGI_SPINE.kafkaProperties();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
-        consumerProperties.put("json.value.type", KafkaTestMessage.class.getName());
-        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaAdapterTest.class.getSimpleName());
 
 
@@ -61,6 +60,7 @@ class KafkaAdapterTest {
 
         //Assert/Await
         await().atMost(15, TimeUnit.SECONDS).until( () -> (!listener.getResult().isEmpty()));
+        Assertions.assertEquals(expectedResult, listener.getResult().get(0));
         objectUnderTest.stop();
     }
 
@@ -69,10 +69,12 @@ class KafkaAdapterTest {
     public static class MyKafkaListener extends TypedEventListener<String, KafkaTestMessage>
     {
         private final List<KafkaTestMessage> result = new ArrayList<>();
+        MyKafkaListener() {
+            super(String.class, KafkaTestMessage.class);
+        }
 
         @Override
         protected void onEvent(KafkaTestMessage value) {
-            System.out.println("Reveived Value");
             result.add(value);
         }
 

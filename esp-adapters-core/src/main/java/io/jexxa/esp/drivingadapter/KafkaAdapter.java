@@ -16,19 +16,25 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 public class KafkaAdapter implements IDrivingAdapter {
 
-    private final KafkaConsumer<?, ?> consumer;
+    private KafkaConsumer<?, ?> consumer;
     private boolean running = false;
+    private final Properties properties;
 
     private EventListener eventListener;
     private final ExecutorService executor = newSingleThreadExecutor();
 
-    public KafkaAdapter(Properties props) {
-        this.consumer = new KafkaConsumer<>(props);
+    public KafkaAdapter(Properties properties) {
+        this.properties = properties;
     }
 
     @Override
     public void register(Object port) {
         this.eventListener = (EventListener)(port);
+
+        properties.put("json.key.type", eventListener.keyType().getName());
+        properties.put("json.value.type", eventListener.valueType().getName());
+        consumer = new KafkaConsumer<>(properties);
+
     }
 
     @Override
@@ -45,7 +51,9 @@ public class KafkaAdapter implements IDrivingAdapter {
     @Override
     synchronized public void stop() {
         running = false;
-        consumer.wakeup();
+        if (consumer != null ) {
+            consumer.wakeup();
+        }
         executor.shutdown();
         try {
             if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -59,10 +67,8 @@ public class KafkaAdapter implements IDrivingAdapter {
 
     private void run() {
         while (running) {
-            System.out.println("RUN ...");
             ConsumerRecords<?, ?> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<?, ?> record : records) {
-                System.out.printf("Received: %s%n", record.value());
                 eventListener.onEvent(record);
             }
         }
