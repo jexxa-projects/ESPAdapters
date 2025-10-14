@@ -1,6 +1,7 @@
 package io.jexxa.esp.drivingadapter;
 
 import io.jexxa.adapterapi.drivingadapter.IDrivingAdapter;
+import io.jexxa.common.facade.logger.SLF4jLogger;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -8,13 +9,18 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class KafkaAdapter<K, V> implements IDrivingAdapter, Runnable, AutoCloseable{
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
-    private final KafkaConsumer<K, V> consumer;
+public class KafkaAdapter implements IDrivingAdapter {
+
+    private final KafkaConsumer<?, ?> consumer;
     private boolean running = false;
 
-    private EventListener<K, V> eventListener;
+    private EventListener eventListener;
+    private final ExecutorService executor = newSingleThreadExecutor();
 
     public KafkaAdapter(Properties props) {
         this.consumer = new KafkaConsumer<>(props);
@@ -22,37 +28,40 @@ public class KafkaAdapter<K, V> implements IDrivingAdapter, Runnable, AutoClosea
 
     @Override
     public void register(Object port) {
-        this.eventListener = (EventListener<K,V>)(port);
+        this.eventListener = (EventListener)(port);
     }
 
     @Override
-    public void start() {
+    synchronized public void start() {
         consumer.subscribe(Collections.singletonList(eventListener.getTopic()));
 
-        System.out.println("Listening for messages on topic: " + eventListener.getTopic());
+        SLF4jLogger.getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", eventListener.getTopic());
 
-        while (running) {
-            ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(1000));
-            for (ConsumerRecord<K, V> record : records) {
-                System.out.printf("Received message: key=%s value=%s partition=%d offset=%d%n",
-                        record.key(), record.value(), record.partition(), record.offset());
+        running = true;
+        executor.submit(this::run);
+    }
+
+
+    @Override
+    synchronized public void stop() {
+        running = false;
+        consumer.wakeup();
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                SLF4jLogger.getLogger(KafkaConsumer.class).warn("Force shutdown...");
+                executor.shutdownNow();
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
-
-    @Override
-    public void stop() {
-        running = false;
-        consumer.wakeup();
-    }
-
-
-    @Override
-    public void run() {
+    private void run() {
         while (running) {
-            ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(1000));
-            for (ConsumerRecord<K, V> record : records) {
+            System.out.println("RUN ...");
+            ConsumerRecords<?, ?> records = consumer.poll(Duration.ofMillis(100));
+            for (ConsumerRecord<?, ?> record : records) {
                 System.out.printf("Received: %s%n", record.value());
                 eventListener.onEvent(record);
             }
@@ -60,8 +69,4 @@ public class KafkaAdapter<K, V> implements IDrivingAdapter, Runnable, AutoClosea
         consumer.close();
     }
 
-    @Override
-    public void close() {
-        consumer.close();
-    }
 }
