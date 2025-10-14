@@ -7,21 +7,23 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.time.Duration;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.Collections.singletonList;
 
 public class KafkaAdapter implements IDrivingAdapter {
+    private static final String JSON_KEY_TYPE = "json.key.type";
+    private static final String JSON_VALUE_TYPE = "json.value.type";
+    private final List<InnerKafkaStruct> eventListener = new ArrayList<>();
 
-    private KafkaConsumer<?, ?> consumer;
-    private boolean running = false;
     private final Properties properties;
 
-    private EventListener eventListener;
-    private final ExecutorService executor = newSingleThreadExecutor();
+    private ExecutorService executor;
 
     public KafkaAdapter(Properties properties) {
         this.properties = properties;
@@ -29,31 +31,34 @@ public class KafkaAdapter implements IDrivingAdapter {
 
     @Override
     public void register(Object port) {
-        this.eventListener = (EventListener)(port);
+        var eventListener = (EventListener)(port);
+        var listenerProperties = new Properties();
+        listenerProperties.putAll(properties);
 
-        properties.put("json.key.type", eventListener.keyType().getName());
-        properties.put("json.value.type", eventListener.valueType().getName());
-        consumer = new KafkaConsumer<>(properties);
+        // Add type information for JSON deserialization
+        if (!listenerProperties.containsKey(JSON_KEY_TYPE)) {
+            listenerProperties.put(JSON_KEY_TYPE, eventListener.keyType().getName());
+        }
+        if (!listenerProperties.containsKey(JSON_VALUE_TYPE)) {
+            listenerProperties.put(JSON_VALUE_TYPE, eventListener.valueType().getName());
+        }
 
+        var consumer = new KafkaConsumer<>(listenerProperties);
+        consumer.subscribe(singletonList(eventListener.getTopic()));
+        this.eventListener.add(new InnerKafkaStruct(eventListener, consumer));
+        SLF4jLogger.getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", eventListener.getTopic());
     }
 
     @Override
     synchronized public void start() {
-        consumer.subscribe(Collections.singletonList(eventListener.getTopic()));
-
-        SLF4jLogger.getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", eventListener.getTopic());
-
-        running = true;
-        executor.submit(this::run);
+        executor = Executors.newFixedThreadPool(eventListener.size());
+        eventListener.forEach( element -> executor.submit( element::run ));
     }
 
 
     @Override
     synchronized public void stop() {
-        running = false;
-        if (consumer != null ) {
-            consumer.wakeup();
-        }
+        eventListener.forEach(InnerKafkaStruct::stop);
         executor.shutdown();
         try {
             if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -65,14 +70,35 @@ public class KafkaAdapter implements IDrivingAdapter {
         }
     }
 
-    private void run() {
-        while (running) {
-            ConsumerRecords<?, ?> records = consumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<?, ?> record : records) {
-                eventListener.onEvent(record);
-            }
+
+    private static class InnerKafkaStruct
+    {
+        private final KafkaConsumer<?, ?> kafkaConsumer;
+        private final EventListener eventListener;
+        private boolean isRunning = false;
+
+        InnerKafkaStruct(EventListener eventListener, KafkaConsumer<?, ?> kafkaConsumer)
+        {
+            this.kafkaConsumer = kafkaConsumer;
+            this.eventListener = eventListener;
         }
-        consumer.close();
+
+        public void run(){
+            isRunning = true;
+            while (isRunning) {
+                ConsumerRecords<?, ?> records = kafkaConsumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<?, ?> record : records) {
+                    eventListener.onEvent(record);
+                }
+            }
+            kafkaConsumer.close();
+        }
+
+        public void stop()
+        {
+            isRunning = false;
+            kafkaConsumer.wakeup();
+        }
     }
 
 }
