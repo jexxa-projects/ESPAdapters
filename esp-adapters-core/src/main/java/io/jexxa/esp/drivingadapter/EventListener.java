@@ -6,5 +6,11 @@ public interface EventListener {
     void onEvent(ConsumerRecord<?, ?> onEvent);
     Class<?> keyType();
     Class<?> valueType();
-    String getTopic();
+    String topic();
+
+    default String groupID()
+    {
+        return getClass().getSimpleName();
+    }
+
 }

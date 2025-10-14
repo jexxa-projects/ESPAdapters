@@ -2,6 +2,7 @@ package io.jexxa.esp.drivingadapter;
 
 import io.jexxa.adapterapi.drivingadapter.IDrivingAdapter;
 import io.jexxa.common.facade.logger.SLF4jLogger;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -43,10 +44,14 @@ public class KafkaAdapter implements IDrivingAdapter {
             listenerProperties.put(JSON_VALUE_TYPE, eventListener.valueType().getName());
         }
 
+        if (!listenerProperties.containsKey(ConsumerConfig.GROUP_ID_CONFIG)) {
+            listenerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, eventListener.groupID());
+        }
+
         var consumer = new KafkaConsumer<>(listenerProperties);
-        consumer.subscribe(singletonList(eventListener.getTopic()));
+        consumer.subscribe(singletonList(eventListener.topic()));
         this.eventListener.add(new InnerKafkaStruct(eventListener, consumer));
-        SLF4jLogger.getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", eventListener.getTopic());
+        SLF4jLogger.getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", eventListener.topic());
     }
 
     @Override
