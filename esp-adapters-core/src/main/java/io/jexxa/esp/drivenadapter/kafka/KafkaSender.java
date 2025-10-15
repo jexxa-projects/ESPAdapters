@@ -1,7 +1,7 @@
 package io.jexxa.esp.drivenadapter.kafka;
 
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
-import io.jexxa.esp.drivenadapter.ESPProducer;
+import io.jexxa.esp.drivenadapter.EventSender;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -11,19 +11,19 @@ import java.util.Properties;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.kafkaProducer;
 import static java.util.Objects.requireNonNull;
 
-public class KafkaESPProducer<K,V> extends ESPProducer<K,V> {
+public class KafkaSender<K,V> extends EventSender<K,V> {
     private final Properties filterProperties;
 
-    public static <K, V> KafkaESPProducer<K,V> kafkaESPProducer(Class<K> keyClazz,
-                                                                Class<V> valueClazz,
-                                                                Properties filterProperties)
+    public static <K, V> KafkaSender<K,V> kafkaSender(Class<K> keyClazz,
+                                                      Class<V> valueClazz,
+                                                      Properties filterProperties)
     {
         requireNonNull(keyClazz);
         requireNonNull(valueClazz);
-        return new KafkaESPProducer<>(filterProperties);
+        return new KafkaSender<>(filterProperties);
     }
 
-    protected KafkaESPProducer(Properties filterProperties) {
+    protected KafkaSender(Properties filterProperties) {
         this.filterProperties = filterProperties;
     }
 

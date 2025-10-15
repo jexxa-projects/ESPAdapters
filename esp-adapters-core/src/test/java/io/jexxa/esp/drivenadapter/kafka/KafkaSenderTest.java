@@ -9,12 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 
-import static io.jexxa.esp.drivenadapter.kafka.KafkaESPProducer.kafkaESPProducer;
+import static io.jexxa.esp.drivenadapter.kafka.KafkaSender.kafkaSender;
 import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class KafkaESPProducerTest {
+class KafkaSenderTest {
     private static final String TEST_TEXT_TOPIC = "test-text-topic";
     private static final String TEST_JSON_TOPIC = "test-json-topic";
 
@@ -36,7 +36,7 @@ class KafkaESPProducerTest {
         //Arrange
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
-        var objectUnderTest = kafkaESPProducer( String.class,
+        var objectUnderTest = kafkaSender( String.class,
                 KafkaTestMessage.class,
                 DIGI_SPINE.kafkaProperties());
 
@@ -59,7 +59,7 @@ class KafkaESPProducerTest {
         //Arrange
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
-        var objectUnderTest = kafkaESPProducer( String.class,
+        var objectUnderTest = kafkaSender( String.class,
                 KafkaTestMessage.class,
                 DIGI_SPINE.kafkaProperties());
 
@@ -83,7 +83,7 @@ class KafkaESPProducerTest {
     @Test
     void sendAsText() {
         // Arrange
-        var objectUnderTest = kafkaESPProducer( String.class,
+        var objectUnderTest = kafkaSender( String.class,
                 KafkaTestMessage.class,
                 DIGI_SPINE.kafkaProperties());
 

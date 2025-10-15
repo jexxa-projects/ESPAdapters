@@ -13,12 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Start Kafka
-        uses: 280780363/kafka-action@v1.0
-        with:
-          kafka version: "latest" # Optional, kafka version
-          kafka port: 9092 # Optional, kafka port
-          auto create topic: "true" # Optional, auto create kafka topic
+      - name: Start Redpanda
+        run: |
+          docker run -d --name=redpanda \
+            -p 9092:9092 \
+            docker.redpanda.com/redpandadata/redpanda:latest \
+            redpanda start \
+              --overprovisioned \
+              --smp 1 \
+              --memory 1G \
+              --reserve-memory 0M \
+              --node-id 0 \
+              --check=false \
+              --kafka-addr PLAINTEXT://0.0.0.0:9092
+          
+          echo "Waiting for Redpanda to start..."
+          sleep 10
+          docker logs redpanda | tail -n 20
+
       - uses: actions/checkout@v5
       - name: Set up JDK 17
         uses: actions/setup-java@v5
