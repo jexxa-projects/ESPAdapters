@@ -1,6 +1,6 @@
 
 [![Maven Test Build](https://github.com/jexxa-projects/ESPAdapters/actions/workflows/mavenBuild.yml/badge.svg)](https://github.com/jexxa-projects/ESPAdapters/actions/workflows/mavenBuild.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/io.jexxa/esp-adapters)](https://maven-badges.herokuapp.com/maven-central/io.jexxa/esp-adapters/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.jexxa.esp/esp-adapters)](https://maven-badges.herokuapp.com/maven-central/io.jexxa.esp/esp-adapters/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # ESPAdapters
