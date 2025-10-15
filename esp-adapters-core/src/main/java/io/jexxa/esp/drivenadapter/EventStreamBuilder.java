@@ -7,39 +7,39 @@ import java.util.Properties;
 
 import static java.util.Objects.requireNonNull;
 
-public class ESPBuilder<K,V> {
+public class EventStreamBuilder<K,V> {
     private final K key;
     private final V event;
-    private final ESPProducer<K,V> espProducer;
+    private final EventSender<K,V> eventSender;
     private final Properties headers = new Properties();
 
     private Long timestamp = null;
     private String topic;
 
-    protected ESPBuilder(V event, ESPProducer<K,V> espProducer){
-        this(null, event, espProducer);
+    protected EventStreamBuilder(V event, EventSender<K,V> eventSender){
+        this(null, event, eventSender);
     }
 
-    protected ESPBuilder(K key, V event, ESPProducer<K,V> espProducer){
+    protected EventStreamBuilder(K key, V event, EventSender<K,V> eventSender){
         this.key = key;
         this.event = event;
-        this.espProducer = espProducer;
+        this.eventSender = eventSender;
     }
 
     @CheckReturnValue
-    public ESPBuilder<K,V> withTimestamp(Instant timestamp){
+    public EventStreamBuilder<K,V> withTimestamp(Instant timestamp){
         this.timestamp = timestamp.toEpochMilli();
         return this;
     }
 
     @CheckReturnValue
-    public ESPBuilder<K,V> toTopic(String topic){
+    public EventStreamBuilder<K,V> toTopic(String topic){
         this.topic = requireNonNull(topic);
         return this;
     }
 
     @CheckReturnValue
-    public ESPBuilder<K,V>  addHeader(String key, String value)
+    public EventStreamBuilder<K,V> addHeader(String key, String value)
     {
         headers.put(key, value);
 
@@ -47,21 +47,21 @@ public class ESPBuilder<K,V> {
     }
 
     public void asJSON(){
-        espProducer.sendAsJSON(key,
+        eventSender.sendAsJSON(key,
                 event,
                 requireNonNull(topic),
                 timestamp, headers);
     }
 
     public void asAVRO(){
-        espProducer.sendAsAVRO(key,
+        eventSender.sendAsAVRO(key,
                 event,
                 requireNonNull(topic),
                 timestamp, headers);
     }
 
     public void asText(){
-        espProducer.sendAsText(key,
+        eventSender.sendAsText(key,
                 event,
                 requireNonNull(topic),
                 timestamp, headers);

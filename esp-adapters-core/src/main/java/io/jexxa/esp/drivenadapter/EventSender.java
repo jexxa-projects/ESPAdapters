@@ -4,16 +4,16 @@ import io.jexxa.common.facade.utils.annotation.CheckReturnValue;
 
 import java.util.Properties;
 
-public abstract class ESPProducer<K,V> {
+public abstract class EventSender<K,V> {
 
     @CheckReturnValue
-    public ESPBuilder<K,V> send(V eventData){
-        return new ESPBuilder<>(eventData, this);
+    public EventStreamBuilder<K,V> send(V eventData){
+        return new EventStreamBuilder<>(eventData, this);
     }
 
     @CheckReturnValue
-    public ESPBuilder<K,V> send(K key, V eventData){
-        return new ESPBuilder<>(key, eventData, this);
+    public EventStreamBuilder<K,V> send(K key, V eventData){
+        return new EventStreamBuilder<>(key, eventData, this);
     }
 
     protected void sendAsJSON(K key, V eventData, String topic, Long timestamp)
