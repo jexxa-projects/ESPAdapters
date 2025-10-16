@@ -30,7 +30,7 @@
     <slf4j.simple.version>2.0.17</slf4j.simple.version>
     <io.jexxa.common-adapters>2.6.0</io.jexxa.common-adapters>
     <kafka.clients.version>8.0.0-ce</kafka.clients.version>
-    <kafka.json.schema.serializer>8.0.2</kafka.json.schema.serializer>
+    <kafka.json.schema.serializer>8.1.0</kafka.json.schema.serializer>
     <apache.commons.lang3>3.19.0</apache.commons.lang3>
     <!-- version of test dependencies -->
     <junit.platform.launcher.version>6.0.0</junit.platform.launcher.version>
@@ -57,7 +57,7 @@
     <maven.site.plugin>3.21.0</maven.site.plugin>
     <maven.surefire.plugin>3.5.4</maven.surefire.plugin>
     <maven.release.plugin>3.0.0-M1</maven.release.plugin>
-    <maven.jacoco.plugin>0.8.13</maven.jacoco.plugin>
+    <maven.jacoco.plugin>0.8.14</maven.jacoco.plugin>
     <maven.reports.plugin>3.9.0</maven.reports.plugin>
     <maven.enforcer.plugin>3.6.2</maven.enforcer.plugin>
     <maven.versions.plugin>2.19.1</maven.versions.plugin>
