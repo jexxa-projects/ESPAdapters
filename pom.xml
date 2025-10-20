@@ -37,7 +37,7 @@
     <junit.jupiter.engine.version>6.0.0</junit.jupiter.engine.version>
     <junit.jupiter.params.version>6.0.0</junit.jupiter.params.version>
 
-    <jlegmed.core.version>4.4.0</jlegmed.core.version>
+    <jlegmed.core.version>4.5.0</jlegmed.core.version>
     <awaitility.version>4.3.0</awaitility.version>
     <unirest.java.version>3.14.5</unirest.java.version>
     <!-- server-name used in mavens settings.xml to find to your repository credentials -->
