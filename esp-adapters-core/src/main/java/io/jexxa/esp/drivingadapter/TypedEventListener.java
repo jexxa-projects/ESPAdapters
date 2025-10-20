@@ -18,6 +18,7 @@ public abstract class TypedEventListener<K, V> implements EventListener {
     public void onEvent(ConsumerRecord<?, ?> onEvent) {
         ConsumerRecord<K, V> consumerRecord = (ConsumerRecord<K,V>)onEvent;
         onEvent(consumerRecord.key(), consumerRecord.value(), consumerRecord.headers());
+        
     }
 
     @Override
