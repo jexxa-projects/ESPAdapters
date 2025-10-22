@@ -8,6 +8,8 @@ import org.apache.kafka.common.header.internals.RecordHeader;
 
 import java.util.Properties;
 
+import static io.jexxa.common.facade.utils.properties.PropertiesPrefix.globalPrefix;
+import static io.jexxa.common.facade.utils.properties.PropertiesUtils.removePrefixFromKeys;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.kafkaProducer;
 import static java.util.Objects.requireNonNull;
 
@@ -24,7 +26,7 @@ public class KafkaSender<K,V> extends EventSender<K,V> {
     }
 
     protected KafkaSender(Properties filterProperties) {
-        this.filterProperties = filterProperties;
+        this.filterProperties = removePrefixFromKeys(filterProperties, globalPrefix());
     }
 
     @Override

@@ -21,6 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.jexxa.common.facade.logger.SLF4jLogger.getLogger;
+import static io.jexxa.common.facade.utils.properties.PropertiesPrefix.globalPrefix;
+import static io.jexxa.common.facade.utils.properties.PropertiesUtils.removePrefixFromKeys;
 import static java.util.Collections.singletonList;
 
 public class KafkaAdapter implements IDrivingAdapter {
@@ -33,7 +35,7 @@ public class KafkaAdapter implements IDrivingAdapter {
     private ExecutorService executor;
 
     public KafkaAdapter(Properties properties) {
-        this.properties = properties;
+        this.properties = removePrefixFromKeys(properties, globalPrefix());
     }
 
     @Override
@@ -41,22 +43,23 @@ public class KafkaAdapter implements IDrivingAdapter {
         var eventListener = (EventListener)(port);
         var listenerProperties = createListenerProperties(properties, eventListener);
         var consumer = new KafkaConsumer<>(listenerProperties);
+        var topic = eventListener.topic();
 
-        consumer.subscribe(singletonList(eventListener.topic()));
+        consumer.subscribe(singletonList(topic));
         eventListeners.add(new InnerKafkaStruct(eventListener, consumer));
 
-        getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", eventListener.topic());
+        getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", topic);
     }
 
     @Override
-    synchronized public void start() {
+    public synchronized void start() {
         executor = Executors.newFixedThreadPool(eventListeners.size());
         eventListeners.forEach(element -> executor.submit( element::run ));
     }
 
 
     @Override
-    synchronized public void stop() {
+    public synchronized void stop() {
         eventListeners.forEach(InnerKafkaStruct::stop);
         executor.shutdown();
         try {
@@ -65,7 +68,9 @@ public class KafkaAdapter implements IDrivingAdapter {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+
+            throw new IllegalStateException(e);
         }
     }
 
@@ -75,22 +80,13 @@ public class KafkaAdapter implements IDrivingAdapter {
         listenerProperties.putAll(properties);
 
         // Add type information for JSON deserialization
-        if (!listenerProperties.containsKey(JSON_KEY_TYPE)) {
-            listenerProperties.put(JSON_KEY_TYPE, eventListener.keyType().getName());
-        }
-
-        if (!listenerProperties.containsKey(JSON_VALUE_TYPE)) {
-            listenerProperties.put(JSON_VALUE_TYPE, eventListener.valueType().getName());
-        }
-
-        if (!listenerProperties.containsKey(ConsumerConfig.GROUP_ID_CONFIG)) {
-            listenerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, eventListener.groupID());
-        }
+        listenerProperties.putIfAbsent(JSON_KEY_TYPE, eventListener.keyType().getName());
+        listenerProperties.putIfAbsent(JSON_VALUE_TYPE, eventListener.valueType().getName());
+        listenerProperties.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, eventListener.groupID());
 
         //Configure autocommit
-        if (!listenerProperties.containsKey(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG)) {
-            listenerProperties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        } else if(!Objects.equals(listenerProperties.getProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG), "false")) {
+        listenerProperties.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        if(!Objects.equals(listenerProperties.getProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG), "false")) {
             getLogger(KafkaAdapter.class).warn("{} is not set to false -> This can cause message lost in case of an exception during processing the message", ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);
         }
 
@@ -116,21 +112,21 @@ public class KafkaAdapter implements IDrivingAdapter {
             isRunning = true;
             while (isRunning) {
                 ConsumerRecords<?, ?> records = kafkaConsumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<?, ?> record : records) {
-                    processRecord(record);
+                for (ConsumerRecord<?, ?> consumerRecord : records) {
+                    processRecord(consumerRecord);
                 }
             }
             kafkaConsumer.close();
         }
 
-        private void processRecord(ConsumerRecord<?,?> record) {
+        private void processRecord(ConsumerRecord<?,?> consumerRecord) {
             var retryCounter = 0;
             while (retryCounter < 3) {
                 try {
-                    invocationHandler.invoke(eventListener, eventListener::onEvent, record);
+                    invocationHandler.invoke(eventListener, eventListener::onEvent, consumerRecord);
                     kafkaConsumer.commitSync(Collections.singletonMap(
-                            new TopicPartition(record.topic(), record.partition()),
-                            new OffsetAndMetadata(record.offset() + 1)
+                            new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
+                            new OffsetAndMetadata(consumerRecord.offset() + 1)
                     ));
                     return;
                 } catch (Exception e) {
@@ -140,6 +136,7 @@ public class KafkaAdapter implements IDrivingAdapter {
                 try {
                     Thread.sleep(10L * retryCounter); // <-- 10 ms warten
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     //Ignore
                 }
 
