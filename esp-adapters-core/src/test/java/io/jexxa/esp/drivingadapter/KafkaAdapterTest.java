@@ -52,7 +52,7 @@ class KafkaAdapterTest {
         var listener = new KafkaTestListener<>(KafkaFirstTestMessage.class, TEST_MESSAGE1_JSON_TOPIC);
         objectUnderTest.register(listener);
 
-        var sender = kafkaSender( String.class, KafkaFirstTestMessage.class, DIGI_SPINE.kafkaProperties());
+        var sender = kafkaSender( DIGI_SPINE.kafkaProperties());
         //Act
         objectUnderTest.start();
         sender.send("test", expectedResult)
@@ -81,7 +81,7 @@ class KafkaAdapterTest {
         var listener = new KafkaExceptionListener<>(KafkaFirstTestMessage.class, TEST_MESSAGE1_JSON_TOPIC);
         objectUnderTest.register(listener);
 
-        var sender = kafkaSender( String.class, KafkaFirstTestMessage.class, DIGI_SPINE.kafkaProperties());
+        var sender = kafkaSender(DIGI_SPINE.kafkaProperties());
         //Act
         objectUnderTest.start();
         sender.send("test", expectedResult)
@@ -117,13 +117,13 @@ class KafkaAdapterTest {
 
         //Act
         objectUnderTest.start();
-        kafkaSender( String.class, KafkaFirstTestMessage.class, DIGI_SPINE.kafkaProperties())
+        kafkaSender(DIGI_SPINE.kafkaProperties())
                 .send("test", expectedResult1)
                 .withTimestamp(now())
                 .toTopic(TEST_MESSAGE1_JSON_TOPIC)
                 .asJSON();
 
-        kafkaSender( String.class, KafkaSecondTestMessage.class, DIGI_SPINE.kafkaProperties())
+        kafkaSender(DIGI_SPINE.kafkaProperties())
                 .send("test", expectedResult2)
                 .withTimestamp(now())
                 .toTopic(TEST_MESSAGE2_JSON_TOPIC)

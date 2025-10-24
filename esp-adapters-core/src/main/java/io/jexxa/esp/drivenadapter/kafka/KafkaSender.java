@@ -11,57 +11,52 @@ import java.util.Properties;
 import static io.jexxa.common.facade.utils.properties.PropertiesPrefix.globalPrefix;
 import static io.jexxa.common.facade.utils.properties.PropertiesUtils.removePrefixFromKeys;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.kafkaProducer;
-import static java.util.Objects.requireNonNull;
 
-public class KafkaSender<K,V> extends EventSender<K,V> {
-    private final Properties filterProperties;
+public class KafkaSender extends EventSender {
+    private final Properties properties;
 
-    public static <K, V> KafkaSender<K,V> kafkaSender(Class<K> keyClazz,
-                                                      Class<V> valueClazz,
-                                                      Properties filterProperties)
+    public static KafkaSender kafkaSender(Properties filterProperties)
     {
-        requireNonNull(keyClazz);
-        requireNonNull(valueClazz);
-        return new KafkaSender<>(filterProperties);
+        return new KafkaSender(filterProperties);
     }
 
-    protected KafkaSender(Properties filterProperties) {
-        this.filterProperties = removePrefixFromKeys(filterProperties, globalPrefix());
+    public KafkaSender(Properties properties) {
+        this.properties = removePrefixFromKeys(properties, globalPrefix());
     }
 
     @Override
-    protected void sendAsJSON(K key, V eventData, String topic, Long timestamp, Properties headers) {
+    protected <K, V> void sendAsJSON(K key, V eventData, String topic, Long timestamp, Properties headers) {
         setSerializerIfAbsent(KafkaJsonSchemaSerializer.class);
         internalSend(key, eventData, topic, timestamp, headers);
     }
 
     @Override
-    protected void sendAsAVRO(K key, V eventData, String topic, Long timestamp, Properties headers) {
+    protected <K, V> void sendAsAVRO(K key, V eventData, String topic, Long timestamp, Properties headers) {
         //Not implemented yet
     }
 
     @Override
-    protected void sendAsText(K key, V eventData, String topic, Long timestamp, Properties headers) {
+    protected <K, V> void sendAsText(K key, V eventData, String topic, Long timestamp, Properties headers) {
         setSerializerIfAbsent(GenericStringSerializer.class);
         internalSend(key, eventData, topic, timestamp, headers);
     }
 
     private <T> void setSerializerIfAbsent(Class<T> clazz)
     {
-        this.filterProperties.setProperty(
+        this.properties.setProperty(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                filterProperties.getProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, clazz.getName())
+                properties.getProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, clazz.getName())
         );
 
-        this.filterProperties.setProperty(
+        this.properties.setProperty(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                filterProperties.getProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, clazz.getName())
+                properties.getProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, clazz.getName())
         );
     }
 
     private void internalSend(Object key, Object eventData, String topic, Long timestamp, Properties headers)
     {
-        var producer = kafkaProducer(filterProperties);
+        var producer = kafkaProducer(properties);
         var producerRecord = new ProducerRecord<>(topic, null, timestamp, key, eventData);
 
         headers.forEach( (hKey, hValue) -> producerRecord.headers().add(

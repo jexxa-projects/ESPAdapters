@@ -36,9 +36,7 @@ class KafkaSenderTest {
         //Arrange
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
-        var objectUnderTest = kafkaSender( String.class,
-                KafkaTestMessage.class,
-                DIGI_SPINE.kafkaProperties());
+        var objectUnderTest = kafkaSender( DIGI_SPINE.kafkaProperties());
 
         //Act
         objectUnderTest
@@ -59,9 +57,7 @@ class KafkaSenderTest {
         //Arrange
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
-        var objectUnderTest = kafkaSender( String.class,
-                KafkaTestMessage.class,
-                DIGI_SPINE.kafkaProperties());
+        var objectUnderTest = kafkaSender(DIGI_SPINE.kafkaProperties());
 
         //Act
         objectUnderTest
@@ -83,9 +79,7 @@ class KafkaSenderTest {
     @Test
     void sendAsText() {
         // Arrange
-        var objectUnderTest = kafkaSender( String.class,
-                KafkaTestMessage.class,
-                DIGI_SPINE.kafkaProperties());
+        var objectUnderTest = kafkaSender(DIGI_SPINE.kafkaProperties());
 
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
