@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+import static io.jexxa.common.facade.utils.properties.PropertiesPrefix.globalPrefix;
+
 public class DigiSpine {
     private final KafkaContainer kafkaBroker;//Conflunce-Kafka funktioniert mit SchemaRegistry nicht
     private final GenericContainer<?> schemaRegistry;
@@ -64,7 +66,10 @@ public class DigiSpine {
     public Properties kafkaProperties()
     {
         Properties properties = new Properties();
-        properties.putAll(kafkaProperties);
+        var schemaRegistryUrl = "http://" + schemaRegistry.getHost() + ":" + schemaRegistry.getMappedPort(8081);
+
+        properties.put(globalPrefix() + ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers());
+        properties.put(globalPrefix() + "schema.registry.url", schemaRegistryUrl);
         return properties;
     }
 
@@ -204,7 +209,7 @@ public class DigiSpine {
 
     private <T> Properties consumerPropertiesJSON(Class<T> clazz)
     {
-        Properties consumerProperties = kafkaProperties();
+        Properties consumerProperties = kafkaPropertiesWithoutPrefix();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put("json.value.type", clazz.getName());
@@ -215,7 +220,7 @@ public class DigiSpine {
     }
     private <K,V> Properties consumerPropertiesJSON(Class<K> clazzKey, Class<V> clazzValue)
     {
-        Properties consumerProperties = kafkaProperties();
+        Properties consumerProperties = kafkaPropertiesWithoutPrefix();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put("json.value.type", clazzValue.getName());
@@ -228,7 +233,7 @@ public class DigiSpine {
 
     private Properties consumerPropertiesText()
     {
-        Properties consumerProperties = kafkaProperties();
+        Properties consumerProperties = kafkaPropertiesWithoutPrefix();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
@@ -237,5 +242,11 @@ public class DigiSpine {
         return consumerProperties;
     }
 
+    private Properties kafkaPropertiesWithoutPrefix()
+    {
+        Properties properties = new Properties();
+        properties.putAll(kafkaProperties);
+        return properties;
+    }
 
 }
