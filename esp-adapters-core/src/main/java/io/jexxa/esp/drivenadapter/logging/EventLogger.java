@@ -1,6 +1,5 @@
 package io.jexxa.esp.drivenadapter.logging;
 
-import io.jexxa.common.drivenadapter.messaging.logging.MessageLogger;
 import io.jexxa.esp.drivenadapter.EventSender;
 import org.slf4j.Logger;
 
