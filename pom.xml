@@ -35,7 +35,7 @@
     <kafka.json.schema.serializer>8.1.0</kafka.json.schema.serializer>
     <apache.commons.lang3>3.19.0</apache.commons.lang3>
     <!-- version of test dependencies -->
-    <junit.platform.launcher.version>6.0.0</junit.platform.launcher.version>
+    <junit.platform.launcher.version>6.0.1</junit.platform.launcher.version>
     <junit.jupiter.engine.version>6.0.0</junit.jupiter.engine.version>
     <junit.jupiter.params.version>6.0.0</junit.jupiter.params.version>
 
