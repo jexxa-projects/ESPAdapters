@@ -1,7 +1,7 @@
 package io.jexxa.esp.drivingadapter;
 
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
-import io.jexxa.esp.digispine.DigiSpine;
+import io.jexxa.esp.DigiSpine;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;

@@ -1,5 +1,6 @@
 package io.jexxa.esp.drivingadapter;
 
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.jexxa.adapterapi.drivingadapter.IDrivingAdapter;
 import io.jexxa.adapterapi.invocation.InvocationManager;
 import io.jexxa.adapterapi.invocation.JexxaInvocationHandler;
@@ -83,9 +84,12 @@ public class KafkaAdapter implements IDrivingAdapter {
         listenerProperties.putIfAbsent(JSON_KEY_TYPE, eventListener.keyType().getName());
         listenerProperties.putIfAbsent(JSON_VALUE_TYPE, eventListener.valueType().getName());
         listenerProperties.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, eventListener.groupID());
+        listenerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        listenerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
 
         //Configure autocommit
         listenerProperties.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+
         if(!Objects.equals(listenerProperties.getProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG), "false")) {
             getLogger(KafkaAdapter.class).warn("{} is not set to false -> This can cause message lost in case of an exception during processing the message", ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);
         }

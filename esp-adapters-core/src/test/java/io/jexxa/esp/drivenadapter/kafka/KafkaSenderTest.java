@@ -1,6 +1,6 @@
 package io.jexxa.esp.drivenadapter.kafka;
 
-import io.jexxa.esp.digispine.DigiSpine;
+import io.jexxa.esp.DigiSpine;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

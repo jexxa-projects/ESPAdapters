@@ -56,13 +56,6 @@
 
         <!-- Dependencies required for tests -->
 
-        <dependency>
-            <groupId>io.jexxa.esp</groupId>
-            <artifactId>esp-adapters-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>org.junit.platform</groupId>
@@ -75,6 +68,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.engine.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>1.21.3</version>
             <scope>test</scope>
         </dependency>
 
