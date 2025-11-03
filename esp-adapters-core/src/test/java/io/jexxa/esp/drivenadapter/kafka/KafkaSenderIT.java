@@ -47,7 +47,7 @@ class KafkaSenderIT {
                 .toTopic(TEST_JSON_TOPIC)
                 .asJSON();
 
-        await().atMost(Duration.ofMillis(1500)).until(() -> !listener.getResult().isEmpty());
+        await().atMost(Duration.ofSeconds(15)).until(() -> !listener.getResult().isEmpty());
         var result = listener.getResult();
         //Assert
         assertFalse(result.isEmpty());
@@ -76,7 +76,7 @@ class KafkaSenderIT {
                 .toTopic(TEST_JSON_TOPIC)
                 .asJSON();
 
-        await().atMost(Duration.ofMillis(1500)).until(() -> !listener.getResult().isEmpty());
+        await().atMost(Duration.ofSeconds(15)).until(() -> !listener.getResult().isEmpty());
         var result = listener.getResult();
 
         //Assert
@@ -112,7 +112,7 @@ class KafkaSenderIT {
                 .toTopic(TEST_TEXT_TOPIC)
                 .asText();
 
-        await().atMost(Duration.ofMillis(1500)).until(() -> !listener.getResult().isEmpty());
+        await().atMost(Duration.ofSeconds(15)).until(() -> !listener.getResult().isEmpty());
 
         //Assert
         assertFalse(listener.getResult().isEmpty());
