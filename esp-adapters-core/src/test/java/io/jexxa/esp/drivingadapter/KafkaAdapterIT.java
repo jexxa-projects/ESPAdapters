@@ -1,21 +1,19 @@
 package io.jexxa.esp.drivingadapter;
 
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
+import io.jexxa.esp.KafkaTestListener;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static io.jexxa.common.facade.logger.SLF4jLogger.getLogger;
-import static io.jexxa.esp.BrokerUtilities.deleteTopics;
-import static io.jexxa.esp.BrokerUtilities.kafkaProperties;
+import static io.jexxa.esp.KafkaUtilities.deleteTopics;
+import static io.jexxa.esp.KafkaUtilities.kafkaProperties;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaSender.kafkaSender;
 import static java.time.Instant.now;
 import static org.awaitility.Awaitility.await;
@@ -139,35 +137,7 @@ class KafkaAdapterIT {
     record KafkaSecondTestMessage(String message1, Instant timestamp, String message2) { }
 
 
-    static class KafkaTestListener<T> extends TypedEventListener<String, T>
-    {
-        private final List<T> result = new ArrayList<>();
-        private final String groupID = UUID.randomUUID().toString(); // Since we use this listener in multiple tests, we need a unique groupid for each test
-        private final String topic;
-        KafkaTestListener(Class<T> clazz, String topic) {
-            super(String.class, clazz);
-            this.topic = topic;
-        }
 
-        @Override
-        protected void onEvent(T value) {
-            result.add(value);
-        }
-
-        @Override
-        public String topic() {
-            return topic;
-        }
-
-        @Override
-        public String groupID() {
-            return groupID;
-        }
-
-        public List<T> getResult() {
-            return result;
-        }
-    }
 
 
     static class KafkaExceptionListener<T> extends KafkaTestListener<T> {

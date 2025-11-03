@@ -8,12 +8,13 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-public class BrokerUtilities {
+public class KafkaUtilities {
     public static Properties kafkaProperties()
     {
         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
         consumerProps.put("schema.registry.url", "http://127.0.0.1:8081");
+        consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return consumerProps;
     }
 
@@ -44,5 +45,6 @@ public class BrokerUtilities {
             throw new IllegalArgumentException(e);
         }
     }
+
 
 }

@@ -4,12 +4,14 @@ import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.jexxa.adapterapi.drivingadapter.IDrivingAdapter;
 import io.jexxa.adapterapi.invocation.InvocationManager;
 import io.jexxa.adapterapi.invocation.JexxaInvocationHandler;
+import io.jexxa.common.facade.logger.SLF4jLogger;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -85,8 +87,8 @@ public class KafkaAdapter implements IDrivingAdapter {
         listenerProperties.putIfAbsent(JSON_KEY_TYPE, eventListener.keyType().getName());
         listenerProperties.putIfAbsent(JSON_VALUE_TYPE, eventListener.valueType().getName());
         listenerProperties.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, eventListener.groupID());
-        listenerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
-        listenerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        listenerProperties.putIfAbsent(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
+        listenerProperties.putIfAbsent(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
 
         //Configure autocommit
         listenerProperties.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
@@ -115,12 +117,25 @@ public class KafkaAdapter implements IDrivingAdapter {
 
         public void run(){
             isRunning = true;
-            while (isRunning) {
+            try {
+
+            while (true) {
+                synchronized (this) {
+                    if (!isRunning) {
+                        break;
+                    }
+                }
                 ConsumerRecords<?, ?> records = kafkaConsumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<?, ?> consumerRecord : records) {
                     processRecord(consumerRecord);
                 }
             }
+            } catch (WakeupException e) {
+                if (isRunning ){
+                    SLF4jLogger.getLogger(KafkaAdapter.class).error("Received wakeup exception while not listening");
+                }
+            }
+
             kafkaConsumer.close();
         }
 
@@ -151,8 +166,11 @@ public class KafkaAdapter implements IDrivingAdapter {
 
         public void stop()
         {
-            isRunning = false;
-            kafkaConsumer.wakeup();
+            synchronized (this) {
+                isRunning = false;
+                kafkaConsumer.wakeup();
+            }
+
         }
     }
 

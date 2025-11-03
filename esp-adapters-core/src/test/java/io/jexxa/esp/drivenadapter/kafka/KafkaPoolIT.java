@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static io.jexxa.esp.BrokerUtilities.deleteTopics;
-import static io.jexxa.esp.BrokerUtilities.getBootstrapServers;
-import static io.jexxa.esp.BrokerUtilities.kafkaProperties;
-import static io.jexxa.esp.BrokerUtilities.topicExist;
+import static io.jexxa.esp.KafkaUtilities.deleteTopics;
+import static io.jexxa.esp.KafkaUtilities.getBootstrapServers;
+import static io.jexxa.esp.KafkaUtilities.kafkaProperties;
+import static io.jexxa.esp.KafkaUtilities.topicExist;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.createTopic;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.topicExists;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

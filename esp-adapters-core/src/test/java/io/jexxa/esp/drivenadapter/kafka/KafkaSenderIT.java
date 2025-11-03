@@ -1,7 +1,9 @@
 package io.jexxa.esp.drivenadapter.kafka;
 
-import io.jexxa.esp.DigiSpine;
-import org.junit.jupiter.api.AfterAll;
+import io.jexxa.esp.KafkaTestListener;
+import io.jexxa.esp.drivingadapter.KafkaAdapter;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,34 +11,34 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 
+import static io.jexxa.esp.KafkaUtilities.deleteTopics;
+import static io.jexxa.esp.KafkaUtilities.kafkaProperties;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaSender.kafkaSender;
 import static java.time.Instant.now;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class KafkaSenderIT {
     private static final String TEST_TEXT_TOPIC = "test-text-topic";
     private static final String TEST_JSON_TOPIC = "test-json-topic";
 
-    private static final DigiSpine DIGI_SPINE = new DigiSpine();
-
-
     @BeforeEach
-    void resetDigiSpine() {
-        DIGI_SPINE.reset();
-    }
-
-    @AfterAll
-    static void stopDigiSpine() {
-        DIGI_SPINE.stop();
+    void initTests()
+    {
+        deleteTopics();
     }
 
     @Test
     void sendAsJSON() {
         //Arrange
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
+        var kafkaAdapter = new KafkaAdapter(kafkaProperties());
+        var listener = new KafkaTestListener<>(KafkaTestMessage.class, TEST_JSON_TOPIC);
+        kafkaAdapter.register(listener);
+        kafkaAdapter.start();
 
-        var objectUnderTest = kafkaSender( DIGI_SPINE.kafkaProperties());
+        var objectUnderTest = kafkaSender( kafkaProperties());
 
         //Act
         objectUnderTest
@@ -45,11 +47,13 @@ class KafkaSenderIT {
                 .toTopic(TEST_JSON_TOPIC)
                 .asJSON();
 
-        var result = DIGI_SPINE.latestMessageFromJSON(TEST_JSON_TOPIC, Duration.ofMillis(500), KafkaTestMessage.class);
-
+        await().atMost(Duration.ofMillis(1500)).until(() -> !listener.getResult().isEmpty());
+        var result = listener.getResult();
         //Assert
-        assertTrue(result.isPresent());
-        assertEquals(expectedResult, result.get());
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(expectedResult, result.get(0));
+        kafkaAdapter.stop();
     }
 
     @Test
@@ -57,7 +61,12 @@ class KafkaSenderIT {
         //Arrange
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
-        var objectUnderTest = kafkaSender(DIGI_SPINE.kafkaProperties());
+        var kafkaAdapter = new KafkaAdapter(kafkaProperties());
+        var listener = new KafkaTestListener<>(KafkaTestMessage.class, TEST_JSON_TOPIC);
+        kafkaAdapter.register(listener);
+        kafkaAdapter.start();
+
+        var objectUnderTest = kafkaSender(kafkaProperties());
 
         //Act
         objectUnderTest
@@ -67,19 +76,32 @@ class KafkaSenderIT {
                 .toTopic(TEST_JSON_TOPIC)
                 .asJSON();
 
-        var result = DIGI_SPINE.latestRecord(TEST_JSON_TOPIC, Duration.ofMillis(500), String.class, KafkaTestMessage.class);
+        await().atMost(Duration.ofMillis(1500)).until(() -> !listener.getResult().isEmpty());
+        var result = listener.getResult();
 
         //Assert
-        assertTrue(result.isPresent());
-        assertEquals(expectedResult, result.get().value());
-        assertEquals("value" ,new String(result.get().headers().lastHeader("header").value(), StandardCharsets.UTF_8));
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(expectedResult, result.get(0));
+        assertEquals("value" ,new String(listener.getHeaders().get(0).lastHeader("header").value(), StandardCharsets.UTF_8));
+        kafkaAdapter.stop();
+
     }
 
 
     @Test
     void sendAsText() {
         // Arrange
-        var objectUnderTest = kafkaSender(DIGI_SPINE.kafkaProperties());
+
+        var properties = kafkaProperties();
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+        var objectUnderTest = kafkaSender(properties);
+        var kafkaAdapter = new KafkaAdapter(properties);
+        var listener = new KafkaTestListener<>(String.class, TEST_TEXT_TOPIC);
+        kafkaAdapter.register(listener);
+        kafkaAdapter.start();
 
         var expectedResult = new KafkaTestMessage(1, Instant.now(), "test message");
 
@@ -90,14 +112,15 @@ class KafkaSenderIT {
                 .toTopic(TEST_TEXT_TOPIC)
                 .asText();
 
-        var result = DIGI_SPINE.latestMessage(TEST_TEXT_TOPIC, Duration.ofMillis(500));
+        await().atMost(Duration.ofMillis(1500)).until(() -> !listener.getResult().isEmpty());
 
         //Assert
-        assertTrue(result.isPresent());
-        assertEquals(expectedResult.toString(), result.get());
+        assertFalse(listener.getResult().isEmpty());
+        System.out.println(listener.getResult().get(0));
+        assertEquals(expectedResult.toString(), listener.getResult().get(0));
+        kafkaAdapter.stop();
     }
 
 
     public record KafkaTestMessage(int counter, Instant timestamp, String message) { }
-
 }
