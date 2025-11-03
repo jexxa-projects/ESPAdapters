@@ -1,9 +1,7 @@
 package io.jexxa.esp.drivingadapter;
 
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
-import io.jexxa.esp.DigiSpine;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +14,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static io.jexxa.common.facade.logger.SLF4jLogger.getLogger;
+import static io.jexxa.esp.BrokerUtilities.deleteTopics;
+import static io.jexxa.esp.BrokerUtilities.kafkaProperties;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaSender.kafkaSender;
 import static java.time.Instant.now;
 import static org.awaitility.Awaitility.await;
@@ -25,17 +25,10 @@ class KafkaAdapterIT {
     private static final String TEST_MESSAGE1_JSON_TOPIC = "test-message1-json-topic";
     private static final String TEST_MESSAGE2_JSON_TOPIC = "test-message2-json-topic";
 
-    private static final DigiSpine DIGI_SPINE = new DigiSpine();
-
 
     @BeforeEach
-    void resetDigiSpine() {
-        DIGI_SPINE.reset();
-    }
-
-    @AfterAll
-    static void stopDigiSpine() {
-        DIGI_SPINE.stop();
+    void init() {
+        deleteTopics();
     }
 
     @Test
@@ -43,7 +36,7 @@ class KafkaAdapterIT {
         //Arrange
         var expectedResult = new KafkaFirstTestMessage(1, Instant.now(), "test message");
 
-        Properties consumerProperties = DIGI_SPINE.kafkaProperties();
+        Properties consumerProperties = kafkaProperties();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -52,7 +45,7 @@ class KafkaAdapterIT {
         var listener = new KafkaTestListener<>(KafkaFirstTestMessage.class, TEST_MESSAGE1_JSON_TOPIC);
         objectUnderTest.register(listener);
 
-        var sender = kafkaSender( DIGI_SPINE.kafkaProperties());
+        var sender = kafkaSender( kafkaProperties());
         //Act
         objectUnderTest.start();
         sender.send("test", expectedResult)
@@ -72,7 +65,7 @@ class KafkaAdapterIT {
         //Arrange
         var expectedResult = new KafkaFirstTestMessage(1, Instant.now(), "test message");
 
-        Properties consumerProperties = DIGI_SPINE.kafkaProperties();
+        Properties consumerProperties = kafkaProperties();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -81,7 +74,7 @@ class KafkaAdapterIT {
         var listener = new KafkaExceptionListener<>(KafkaFirstTestMessage.class, TEST_MESSAGE1_JSON_TOPIC);
         objectUnderTest.register(listener);
 
-        var sender = kafkaSender(DIGI_SPINE.kafkaProperties());
+        var sender = kafkaSender(kafkaProperties());
         //Act
         objectUnderTest.start();
         sender.send("test", expectedResult)
@@ -103,7 +96,7 @@ class KafkaAdapterIT {
         var expectedResult1 = new KafkaFirstTestMessage(1, Instant.now(), "test message");
         var expectedResult2 = new KafkaSecondTestMessage("Hello", Instant.now(), "test message");
 
-        Properties consumerProperties = DIGI_SPINE.kafkaProperties();
+        Properties consumerProperties = kafkaProperties();
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonSchemaDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -117,13 +110,13 @@ class KafkaAdapterIT {
 
         //Act
         objectUnderTest.start();
-        kafkaSender(DIGI_SPINE.kafkaProperties())
+        kafkaSender(kafkaProperties())
                 .send("test", expectedResult1)
                 .withTimestamp(now())
                 .toTopic(TEST_MESSAGE1_JSON_TOPIC)
                 .asJSON();
 
-        kafkaSender(DIGI_SPINE.kafkaProperties())
+        kafkaSender(kafkaProperties())
                 .send("test", expectedResult2)
                 .withTimestamp(now())
                 .toTopic(TEST_MESSAGE2_JSON_TOPIC)

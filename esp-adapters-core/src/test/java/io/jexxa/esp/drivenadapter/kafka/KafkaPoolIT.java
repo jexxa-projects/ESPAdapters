@@ -1,14 +1,16 @@
 package io.jexxa.esp.drivenadapter.kafka;
 
-import io.jexxa.esp.DigiSpine;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static io.jexxa.esp.BrokerUtilities.deleteTopics;
+import static io.jexxa.esp.BrokerUtilities.getBootstrapServers;
+import static io.jexxa.esp.BrokerUtilities.kafkaProperties;
+import static io.jexxa.esp.BrokerUtilities.topicExist;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.createTopic;
 import static io.jexxa.esp.drivenadapter.kafka.KafkaPool.topicExists;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -17,28 +19,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KafkaPoolIT {
 
-    static final DigiSpine DIGI_SPINE = new DigiSpine();
-
-
-    @AfterAll
-    static void stopKafka() {
-        DIGI_SPINE.stop();
-    }
-
-    @AfterEach
-    void resetKafka()
+    @BeforeEach
+    void initTest()
     {
-        DIGI_SPINE.deleteTopics();
+        deleteTopics();
     }
 
     @Test
     void failFastSuccess()
     {
         //Arrange
-        var filterProperties = DIGI_SPINE.kafkaProperties();
+        Properties consumerProps = kafkaProperties();
+        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        consumerProps.put("schema.registry.url", "http://127.0.0.1:8081");
 
-                //Act / Assert
-        assertDoesNotThrow(() -> KafkaPool.validateKafkaConnection(filterProperties));
+
+        //Act / Assert
+        assertDoesNotThrow(() -> KafkaPool.validateKafkaConnection(consumerProps));
     }
 
     @Test
@@ -55,7 +52,7 @@ class KafkaPoolIT {
     void testCreateTopic()
     {
         //Arrange
-        var filterProperties = DIGI_SPINE.kafkaProperties();
+        var filterProperties = kafkaProperties();
         var testTopic = "TestTopic";
 
         //Act
@@ -63,14 +60,14 @@ class KafkaPoolIT {
 
         //Assert
         assertTrue(topicExists(filterProperties, testTopic));
-        assertTrue(DIGI_SPINE.topicExist(testTopic));
+        assertTrue(topicExist(testTopic));
     }
 
     @Test
     void testRetentionTime()
     {
         //Arrange
-        var filterProperties = DIGI_SPINE.kafkaProperties();
+        var filterProperties = kafkaProperties();
         var testTopic = "TestTopic";
         createTopic(filterProperties, testTopic, 1, 1);
 
@@ -78,7 +75,8 @@ class KafkaPoolIT {
         KafkaPool.setRetentionForTopic(filterProperties, testTopic, 365, TimeUnit.DAYS);
 
         //Assert
-        assertTrue(DIGI_SPINE.topicExist(testTopic));
+        assertTrue(topicExist(testTopic));
     }
+
 
 }

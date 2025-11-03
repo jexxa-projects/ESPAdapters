@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## \[0.5.0] - 2025-09-07
 ### Added
-- ESPProducer no longer calls flush after each send call. Flush is called when cleaning up open connections 
+- ESPProducer no longer calls flush after each `send` call. Flush is called when cleaning up open connections 
 
 ## \[0.4.0] - 2025-08-21
 ### Added
