@@ -14,7 +14,7 @@ import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class KafkaSenderTest {
+class KafkaSenderIT {
     private static final String TEST_TEXT_TOPIC = "test-text-topic";
     private static final String TEST_JSON_TOPIC = "test-json-topic";
 

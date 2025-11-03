@@ -1,4 +1,4 @@
-package io.jexxa.esp.digispine;
+package io.jexxa.esp;
 
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.jexxa.common.facade.logger.SLF4jLogger;
@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import static io.jexxa.common.facade.utils.properties.PropertiesPrefix.globalPrefix;
 
-public class DigiSpine {
+public class EventStreamingPlatform {
     private final KafkaContainer kafkaBroker;//Conflunce-Kafka funktioniert mit SchemaRegistry nicht
     private final GenericContainer<?> schemaRegistry;
     private final Properties kafkaProperties;
@@ -35,17 +35,17 @@ public class DigiSpine {
     private static final String OFFSET_RESET = "earliest";
 
 
-    public DigiSpine()
+    public EventStreamingPlatform()
     {
         Network network = Network.newNetwork();
-        kafkaBroker = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:8.0.0"))
+        kafkaBroker = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:8.1.0"))
                 .withNetwork(network)
                 .withNetworkAliases("kafka")
                 .withKraft();
         kafkaBroker.start();
 
         schemaRegistry = new GenericContainer<>(
-                DockerImageName.parse("confluentinc/cp-schema-registry:8.0.0"))
+                DockerImageName.parse("confluentinc/cp-schema-registry:8.1.0"))
                 .withNetwork(network)
                 .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://kafka:9092")
                 .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")
@@ -82,6 +82,8 @@ public class DigiSpine {
     {
         schemaRegistry.stop();
         kafkaBroker.stop();
+        schemaRegistry.close();
+        kafkaBroker.close();
     }
 
     @SuppressWarnings("unused")
@@ -91,7 +93,7 @@ public class DigiSpine {
             {
                 admin.createTopics(Collections.singletonList(new NewTopic(topic, 1, (short) 1))).all().get();
             } else {
-                SLF4jLogger.getLogger(DigiSpine.class).warn("Topic {} already exist", topic);
+                SLF4jLogger.getLogger(EventStreamingPlatform.class).warn("Topic {} already exist", topic);
             }
         } catch (ExecutionException  e) {
             throw new IllegalArgumentException(e);
@@ -120,7 +122,7 @@ public class DigiSpine {
             {
                 admin.deleteTopics(Collections.singletonList(topic));
             } else {
-                SLF4jLogger.getLogger(DigiSpine.class).warn("Topic {} does not exist", topic);
+                SLF4jLogger.getLogger(EventStreamingPlatform.class).warn("Topic {} does not exist", topic);
             }
         }catch (ExecutionException  e) {
             throw new IllegalArgumentException(e);

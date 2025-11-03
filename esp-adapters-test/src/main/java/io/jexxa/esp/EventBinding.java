@@ -1,4 +1,4 @@
-package io.jexxa.esp.digispine;
+package io.jexxa.esp;
 
 import io.jexxa.esp.drivenadapter.EventSender;
 import io.jexxa.esp.drivenadapter.EventSenderFactory;

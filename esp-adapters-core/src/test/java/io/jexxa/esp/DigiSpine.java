@@ -38,14 +38,14 @@ public class DigiSpine {
     public DigiSpine()
     {
         Network network = Network.newNetwork();
-        kafkaBroker = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:8.0.0"))
+        kafkaBroker = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:8.1.0"))
                 .withNetwork(network)
                 .withNetworkAliases("kafka")
                 .withKraft();
         kafkaBroker.start();
 
         schemaRegistry = new GenericContainer<>(
-                DockerImageName.parse("confluentinc/cp-schema-registry:8.0.0"))
+                DockerImageName.parse("confluentinc/cp-schema-registry:8.1.0"))
                 .withNetwork(network)
                 .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://kafka:9092")
                 .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")

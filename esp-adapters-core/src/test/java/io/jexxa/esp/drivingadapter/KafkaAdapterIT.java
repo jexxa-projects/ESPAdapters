@@ -20,7 +20,7 @@ import static io.jexxa.esp.drivenadapter.kafka.KafkaSender.kafkaSender;
 import static java.time.Instant.now;
 import static org.awaitility.Awaitility.await;
 
-class KafkaAdapterTest {
+class KafkaAdapterIT {
 
     private static final String TEST_MESSAGE1_JSON_TOPIC = "test-message1-json-topic";
     private static final String TEST_MESSAGE2_JSON_TOPIC = "test-message2-json-topic";

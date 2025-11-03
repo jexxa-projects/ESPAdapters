@@ -52,6 +52,7 @@ public class KafkaAdapter implements IDrivingAdapter {
         getLogger(KafkaAdapter.class).info("Listening for messages on topic: {}", topic);
     }
 
+
     @Override
     public synchronized void start() {
         executor = Executors.newFixedThreadPool(eventListeners.size());
