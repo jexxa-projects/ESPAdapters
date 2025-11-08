@@ -20,7 +20,7 @@ It provides templates and utilities for integrating event-driven architectures i
 
 ## 🧡 Requirements
 
-- Java **17+**
+- Java **25+**
 - IDE with **Maven** or **Gradle** support (IntelliJ, Eclipse, VS Code)
 
 ---
@@ -33,17 +33,17 @@ It provides templates and utilities for integrating event-driven architectures i
 <dependency>
     <groupId>io.jexxa.esp</groupId>
     <artifactId>esp-adapters-core</artifactId>
-    <version>0.4.0</version>
+    <version>0.6.0</version>
 </dependency>
 ```
 
 **Gradle:**
 
 ```groovy
-implementation "io.jexxa.esp:esp-adapters-core:0.4.0"
+implementation "io.jexxa.esp:esp-adapters-core:0.6.0"
 ```
 
-Once the dependency is added, ESPAdapters is ready to use — no local build required.
+Once the dependency is added, `ESPAdapters` is ready to use — no local build required.
 
 ---
 ## 📚 Resources
