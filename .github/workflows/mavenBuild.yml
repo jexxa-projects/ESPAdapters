@@ -25,11 +25,11 @@ jobs:
               --reserve-memory 0M \
               --node-id 0 \
               --check=false \
-              --kafka-addr PLAINTEXT://0.0.0.0:9092
-          
-          echo "Waiting for Redpanda to start..."
-          sleep 10
-          docker logs redpanda | tail -n 20
+              --kafka-addr INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092 \
+              --advertise-kafka-addr INSIDE://redpanda:29092,OUTSIDE://localhost:9092 \
+              --advertise-kafka-addr PLAINTEXT://localhost:9092 \
+              --pandaproxy-addr 0.0.0.0:8082 \
+              --schema-registry-addr 0.0.0.0:8081 
 
       - uses: actions/checkout@v5
       - name: Set up JDK 25
