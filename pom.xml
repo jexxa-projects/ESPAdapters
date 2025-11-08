@@ -489,6 +489,5 @@
   <modules>
     <module>esp-adapters-core</module>
     <module>esp-adapters-test</module>
-    <module>esp-jlegmed</module>
   </modules>
 </project>
