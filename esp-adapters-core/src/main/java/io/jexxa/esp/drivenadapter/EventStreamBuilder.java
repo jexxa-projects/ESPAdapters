@@ -10,17 +10,17 @@ import static java.util.Objects.requireNonNull;
 public class EventStreamBuilder<K,V> {
     private final K key;
     private final V event;
-    private final EventSender<K,V> eventSender;
+    private final EventSender eventSender;
     private final Properties headers = new Properties();
 
     private Long timestamp = null;
     private String topic;
 
-    protected EventStreamBuilder(V event, EventSender<K,V> eventSender){
+    protected EventStreamBuilder(V event, EventSender eventSender){
         this(null, event, eventSender);
     }
 
-    protected EventStreamBuilder(K key, V event, EventSender<K,V> eventSender){
+    protected EventStreamBuilder(K key, V event, EventSender eventSender){
         this.key = key;
         this.event = event;
         this.eventSender = eventSender;

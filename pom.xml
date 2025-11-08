@@ -26,18 +26,22 @@
     </developer>
   </developers>
   <properties>
-    <!-- version of dependencies -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+      <!-- version of dependencies -->
     <slf4j.simple.version>2.0.17</slf4j.simple.version>
-    <io.jexxa.common-adapters>2.6.0</io.jexxa.common-adapters>
+    <io.jexxa.common-adapters>3.0.0</io.jexxa.common-adapters>
     <kafka.clients.version>8.0.2-ce</kafka.clients.version>
     <kafka.json.schema.serializer>8.0.2</kafka.json.schema.serializer>
     <apache.commons.lang3>3.19.0</apache.commons.lang3>
+
     <!-- version of test dependencies -->
     <junit.platform.launcher.version>6.0.0</junit.platform.launcher.version>
     <junit.jupiter.engine.version>6.0.0</junit.jupiter.engine.version>
     <junit.jupiter.params.version>6.0.0</junit.jupiter.params.version>
 
-    <jlegmed.core.version>4.4.0</jlegmed.core.version>
+    <jlegmed.core.version>4.5.0</jlegmed.core.version>
+    <classgraph.version>4.8.184</classgraph.version>
     <awaitility.version>4.3.0</awaitility.version>
     <unirest.java.version>3.14.5</unirest.java.version>
     <!-- server-name used in mavens settings.xml to find to your repository credentials -->
@@ -57,7 +61,7 @@
     <maven.site.plugin>3.21.0</maven.site.plugin>
     <maven.surefire.plugin>3.5.4</maven.surefire.plugin>
     <maven.release.plugin>3.0.0-M1</maven.release.plugin>
-    <maven.jacoco.plugin>0.8.13</maven.jacoco.plugin>
+    <maven.jacoco.plugin>0.8.14</maven.jacoco.plugin>
     <maven.reports.plugin>3.9.0</maven.reports.plugin>
     <maven.enforcer.plugin>3.6.2</maven.enforcer.plugin>
     <maven.versions.plugin>2.19.1</maven.versions.plugin>
