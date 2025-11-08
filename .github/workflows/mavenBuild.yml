@@ -29,7 +29,20 @@ jobs:
               --advertise-kafka-addr INSIDE://redpanda:29092,OUTSIDE://localhost:9092 \
               --advertise-kafka-addr PLAINTEXT://localhost:9092 \
               --pandaproxy-addr 0.0.0.0:8082 \
-              --schema-registry-addr 0.0.0.0:8081 
+              --schema-registry-addr 0.0.0.0:8081
+      - name: Wait for Redpanda to be healthy
+        run: |
+          echo "Waiting for Redpanda to be healthy..."
+          for i in {1..30}; do  # ~30 × 2s = 60 Sekunden Timeout
+            if [ "$(docker inspect -f '{{.State.Health.Status}}' redpanda 2>/dev/null)" = "healthy" ]; then
+              echo "✅ Redpanda is healthy!"
+              exit 0
+            fi
+            echo "⏳ Still waiting..."
+            sleep 2
+          done
+          echo "❌ Timeout: Redpanda did not become healthy in time"
+          exit 1
 
       - uses: actions/checkout@v5
       - name: Set up JDK 25
