@@ -13,10 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Start Redpanda
-        run: | 
-          docker run -d --name=redpanda \
+      - name: Start Redpanda with Schema Registry
+        run: |
+          docker run -d --name redpanda \
             -p 9092:9092 \
+            -p 8081:8081 \
+            --health-cmd="rpk cluster info" \
+            --health-interval=5s \
+            --health-retries=20 \
             redpandadata/redpanda:latest \
             redpanda start \
               --overprovisioned \
@@ -24,17 +28,14 @@ jobs:
               --memory 1G \
               --reserve-memory 0M \
               --node-id 0 \
-              --check=false \
-              --kafka-addr INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092 \
-              --advertise-kafka-addr INSIDE://redpanda:29092,OUTSIDE://localhost:9092 \
+              --kafka-addr PLAINTEXT://0.0.0.0:9092 \
               --advertise-kafka-addr PLAINTEXT://localhost:9092 \
-              --pandaproxy-addr 0.0.0.0:8082 \
               --schema-registry-addr 0.0.0.0:8081
 
       - name: Wait for Redpanda to be healthy
         run: |
           echo "Waiting for Redpanda to be healthy..."
-          for i in {1..30}; do  # ~30 × 2s = 60 Sekunden Timeout
+          for i in {1..30}; do  # ~60s Timeout
             if [ "$(docker inspect -f '{{.State.Health.Status}}' redpanda 2>/dev/null)" = "healthy" ]; then
               echo "✅ Redpanda is healthy!"
               exit 0
