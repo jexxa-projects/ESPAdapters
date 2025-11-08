@@ -1,9 +1,10 @@
 package io.jexxa.esp.drivenadapter;
 
-import io.jexxa.common.facade.utils.properties.PropertiesPrefix;
+
+import static io.jexxa.common.facade.utils.properties.PropertiesPrefix.globalPrefix;
 
 public class EventProperties {
-    public static String eventStrategy() { return PropertiesPrefix.globalPrefix() + "event.strategy"; }
+    public static String eventStrategy() { return globalPrefix() + "event.strategy"; }
     private EventProperties() {
 
     }

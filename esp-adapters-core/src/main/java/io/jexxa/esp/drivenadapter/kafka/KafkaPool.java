@@ -1,5 +1,6 @@
 package io.jexxa.esp.drivenadapter.kafka;
 
+import io.jexxa.adapterapi.ConfigurationFailedException;
 import io.jexxa.adapterapi.JexxaContext;
 import io.jexxa.common.facade.logger.SLF4jLogger;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -107,22 +108,22 @@ public class KafkaPool {
     }
 
 
-    public static void validateKafkaConnection(Properties filterProperties)
+    public static void validateKafkaConnection(Properties properties)
     {
-        if (filterProperties.containsKey(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG))
+        if (properties.containsKey(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG))
         {
-            var properties = getAdminClientProperties(filterProperties);
-            try( AdminClient adminClient = AdminClient.create(properties) )
+            var adminClientProperties = getAdminClientProperties(properties);
+            try( AdminClient adminClient = AdminClient.create(adminClientProperties) )
             {
                 var result = adminClient.describeCluster().nodes().get();
                 if (result == null || result.isEmpty()) {
-                    throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
+                    throw new ConfigurationFailedException("Could not connect to Kafka bootstrap servers " + adminClientProperties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
+                throw new ConfigurationFailedException("Could not connect to Kafka bootstrap servers " + adminClientProperties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
             } catch (ExecutionException e){
-                throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
+                throw new ConfigurationFailedException("Could not connect to Kafka bootstrap servers " + adminClientProperties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
             }
         }
     }
@@ -140,7 +141,6 @@ public class KafkaPool {
     private KafkaPool()
     {
         JexxaContext.registerCleanupHandler(this::cleanup);
-        JexxaContext.registerValidationHandler(KafkaPool::validateKafkaConnection);
     }
 
 

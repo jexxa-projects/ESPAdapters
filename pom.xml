@@ -71,7 +71,7 @@
     <maven.shade.plugin>3.6.0</maven.shade.plugin>
     <maven.exec.plugin>3.5.1</maven.exec.plugin>
     <maven.central.publishing.plugin>0.9.0</maven.central.publishing.plugin>
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
   </properties>
   <!-- ************************************************************************** -->
   <!-- IMPORTANT: Change the following lines only if you are familiar with maven  -->

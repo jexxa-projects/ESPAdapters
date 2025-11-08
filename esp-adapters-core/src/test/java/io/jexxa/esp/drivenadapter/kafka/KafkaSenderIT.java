@@ -116,7 +116,6 @@ class KafkaSenderIT {
 
         //Assert
         assertFalse(listener.getResult().isEmpty());
-        System.out.println(listener.getResult().get(0));
         assertEquals(expectedResult.toString(), listener.getResult().get(0));
         kafkaAdapter.stop();
     }
