@@ -2,6 +2,7 @@
 
 ### 🤖 Dependencies
 
+- *(CI)* Bump actions/checkout from 5 to 6 - ([eef7c3d](https://github.com/jexxa-projects/ESPAdapters/commit/eef7c3d3de5011a4aa7db58026869d1f9046434c))
 - *(java)* Bump org.apache.kafka:kafka-clients - ([534ea69](https://github.com/jexxa-projects/ESPAdapters/commit/534ea69febad61d98e5033006dd2d7929e2efb2f))
 - *(java)* Bump io.confluent:kafka-json-schema-serializer - ([f66325e](https://github.com/jexxa-projects/ESPAdapters/commit/f66325e908fe93ec560cd10c607aabef54f9beb6))
 - *(java)* Bump org.apache.maven.plugins:maven-jar-plugin - ([a9d51a4](https://github.com/jexxa-projects/ESPAdapters/commit/a9d51a4670d2eab58542aa0e3aeb1587f4164cd7))
