@@ -33,7 +33,7 @@ It provides templates and utilities for integrating event-driven architectures i
 <dependency>
     <groupId>io.jexxa.esp</groupId>
     <artifactId>esp-adapters-core</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
 </dependency>
 ```
 
