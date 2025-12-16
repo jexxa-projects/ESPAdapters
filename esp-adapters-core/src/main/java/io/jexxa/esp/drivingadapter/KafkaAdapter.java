@@ -130,7 +130,7 @@ public class KafkaAdapter implements IDrivingAdapter {
                     processRecord(consumerRecord);
                 }
             }
-            } catch (WakeupException e) {
+            } catch (WakeupException _) {
                 if (isRunning ){
                     SLF4jLogger.getLogger(KafkaAdapter.class).error("Received wakeup exception while not listening");
                 }
@@ -149,13 +149,13 @@ public class KafkaAdapter implements IDrivingAdapter {
                             new OffsetAndMetadata(consumerRecord.offset() + 1)
                     ));
                     return;
-                } catch (Exception e) {
+                } catch (Exception _) {
                     getLogger(KafkaAdapter.class).warn("Could not process record, try again");
                     ++retryCounter;
                 }
                 try {
-                    Thread.sleep(10L * retryCounter); // <-- 10 ms warten
-                } catch (InterruptedException e) {
+                    Thread.sleep(10L * retryCounter); // <-- 10 ms wait
+                } catch (InterruptedException _) {
                     Thread.currentThread().interrupt();
                     //Ignore
                 }

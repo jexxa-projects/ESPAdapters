@@ -13,6 +13,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.ConfigResource;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class KafkaPool {
 
     public static KafkaProducer<Object,Object> kafkaProducer(Properties properties)
     {
-        return producerMap.computeIfAbsent(properties, entry -> new KafkaProducer<>(properties));
+        return producerMap.computeIfAbsent(properties, _ -> new KafkaProducer<>(properties));
     }
 
     public void cleanup()
@@ -76,10 +77,10 @@ public class KafkaPool {
         }
     }
 
-    public static void createTopic(Properties properties, String topic, int numPartitions, int replicationFactor)
+    public static void createTopic(Properties brokerProperties, String topic, int numPartitions, int replicationFactor, Properties topicProperties)
     {
-        var broker = properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG);
-        var adminClientProperties = getAdminClientProperties(properties);
+        var broker = brokerProperties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG);
+        var adminClientProperties = getAdminClientProperties(brokerProperties);
 
         try (AdminClient admin = AdminClient.create(adminClientProperties)) {
             if (topicExists(admin, topic))
@@ -89,13 +90,23 @@ public class KafkaPool {
             }
 
             NewTopic newTopic = new NewTopic(topic, numPartitions, (short)replicationFactor);
+            Map<String, String> map = new HashMap<>();
+            topicProperties.forEach((k, v) -> map.put((String) k, (String) v));
+            newTopic.configs(map);
+
             admin.createTopics(Collections.singleton(newTopic)).all().get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
+            throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + brokerProperties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
         } catch (ExecutionException e){
-            throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + properties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
+            throw new IllegalArgumentException("Could not connect to Kafka bootstrap servers " + brokerProperties.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG), e);
         }
+    }
+
+
+    public static void createTopic(Properties brokerProperties, String topic, int numPartitions, int replicationFactor)
+    {
+        createTopic(brokerProperties, topic, numPartitions, replicationFactor, new Properties());
     }
 
 
