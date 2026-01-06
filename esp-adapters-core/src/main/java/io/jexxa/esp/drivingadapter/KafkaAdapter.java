@@ -92,10 +92,17 @@ public class KafkaAdapter implements IDrivingAdapter {
 
         //Configure autocommit
         listenerProperties.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        listenerProperties.putIfAbsent(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
 
         if(!Objects.equals(listenerProperties.getProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG), "false")) {
             getLogger(KafkaAdapter.class).warn("{} is not set to false -> This can cause message lost in case of an exception during processing the message", ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);
         }
+
+        if(!Objects.equals(listenerProperties.getProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG), "1")) {
+            getLogger(KafkaAdapter.class).warn("{} is not set to 1 -> This can cause message lost in case of an exception during processing the message", ConsumerConfig.MAX_POLL_RECORDS_CONFIG);
+            listenerProperties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
+        }
+
 
         return listenerProperties;
     }
@@ -118,18 +125,17 @@ public class KafkaAdapter implements IDrivingAdapter {
         public void run(){
             isRunning = true;
             try {
-
-            while (true) {
-                synchronized (this) {
-                    if (!isRunning) {
-                        break;
+                while (true) {
+                    synchronized (this) {
+                        if (!isRunning) {
+                            break;
+                        }
+                    }
+                    ConsumerRecords<?, ?> records = kafkaConsumer.poll(Duration.ofMillis(100));
+                    for (ConsumerRecord<?, ?> consumerRecord : records) {
+                        processRecord(consumerRecord);
                     }
                 }
-                ConsumerRecords<?, ?> records = kafkaConsumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<?, ?> consumerRecord : records) {
-                    processRecord(consumerRecord);
-                }
-            }
             } catch (WakeupException _) {
                 if (isRunning ){
                     SLF4jLogger.getLogger(KafkaAdapter.class).error("Received wakeup exception while not listening");
@@ -140,28 +146,25 @@ public class KafkaAdapter implements IDrivingAdapter {
         }
 
         private void processRecord(ConsumerRecord<?,?> consumerRecord) {
-            var retryCounter = 0;
-            while (retryCounter < 3) {
+            try {
+                invocationHandler.invoke(eventListener, eventListener::onEvent, consumerRecord);
+                kafkaConsumer.commitSync(Collections.singletonMap(
+                        new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
+                        new OffsetAndMetadata(consumerRecord.offset() + 1)
+                ));
+            } catch (Exception e) {
+                getLogger(KafkaAdapter.class).warn("Could not process record. Reason {} -> Do not commit record and seek to kafka-offset {} for retry.", e.getMessage(), consumerRecord.offset());
+                kafkaConsumer.pause(kafkaConsumer.assignment());
+                kafkaConsumer.seek(
+                        new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
+                        consumerRecord.offset());
                 try {
-                    invocationHandler.invoke(eventListener, eventListener::onEvent, consumerRecord);
-                    kafkaConsumer.commitSync(Collections.singletonMap(
-                            new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
-                            new OffsetAndMetadata(consumerRecord.offset() + 1)
-                    ));
-                    return;
-                } catch (Exception _) {
-                    getLogger(KafkaAdapter.class).warn("Could not process record, try again");
-                    ++retryCounter;
-                }
-                try {
-                    Thread.sleep(10L * retryCounter); // <-- 10 ms wait
+                    Thread.sleep(500 );
                 } catch (InterruptedException _) {
                     Thread.currentThread().interrupt();
-                    //Ignore
                 }
-
+                kafkaConsumer.resume(kafkaConsumer.assignment());
             }
-            getLogger(KafkaAdapter.class).error("Could not process record. Giving up after 3 retries. Message is discarded ...");
         }
 
         public void stop()

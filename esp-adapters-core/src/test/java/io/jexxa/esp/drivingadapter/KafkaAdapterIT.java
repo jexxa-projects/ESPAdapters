@@ -53,7 +53,7 @@ class KafkaAdapterIT {
 
         //Assert/Await
         await().atMost(15, TimeUnit.SECONDS).until( () -> (!listener.getResult().isEmpty()));
-        Assertions.assertEquals(expectedResult, listener.getResult().get(0));
+        Assertions.assertEquals(expectedResult, listener.getResult().getFirst());
 
         objectUnderTest.stop();
     }
@@ -125,8 +125,8 @@ class KafkaAdapterIT {
         await().atMost(15, TimeUnit.SECONDS).until( () -> (!firstListener.getResult().isEmpty()));
         await().atMost(15, TimeUnit.SECONDS).until( () -> (!secondListener.getResult().isEmpty()));
 
-        Assertions.assertEquals(expectedResult1, firstListener.getResult().get(0));
-        Assertions.assertEquals(expectedResult2, secondListener.getResult().get(0));
+        Assertions.assertEquals(expectedResult1, firstListener.getResult().getFirst());
+        Assertions.assertEquals(expectedResult2, secondListener.getResult().getFirst());
 
         objectUnderTest.stop();
     }
