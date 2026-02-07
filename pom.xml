@@ -3,7 +3,7 @@
   <name>ESPAdapters</name>
   <groupId>io.jexxa.esp</groupId>
   <artifactId>esp-adapters</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   <url>https://github.com/jexxa-projects/ESPAdapters</url>
   <description>ESPAdapters - Adapters for Event Stream Processing in Jexxa and JLegMed</description>
@@ -11,7 +11,7 @@
     <connection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</connection>
     <url>https://github.com/jexxa-projects/ESPAdapters</url>
     <developerConnection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</developerConnection>
-    <tag>esp-adapters-0.6.0</tag>
+    <tag>esp-adapters-1.0.0</tag>
   </scm>
   <licenses>
     <license>
