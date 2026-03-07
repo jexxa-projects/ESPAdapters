@@ -26,6 +26,11 @@
             <version>${slf4j.simple.version}</version>
         </dependency>
         <dependency>
+            <groupId>at.yawk.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+            <version>${lz4.java.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.jexxa.common</groupId>
             <artifactId>common-adapters</artifactId>
             <version>${io.jexxa.common-adapters}</version>
@@ -34,6 +39,12 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>${kafka.clients.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>at.yawk.lz4</groupId>
+                    <artifactId>lz4-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Confluent JSON Schema Serializer -->
         <dependency>
