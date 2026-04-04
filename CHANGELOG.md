@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[1.0.2] - 2026-04-04
+
+### Fix
+- updated dependencies
+- *(java)* Bump io.jexxa.common:common-adapters from 3.0.3 to 3.0.4 - ([3092571](https://github.com/jexxa-projects/ESPAdapters/commit/3092571ea1ba2aff4d3715b85987ecfbdd48ce38))
+
+
 ## \[1.0.1] - 2026-03-07
 
 ### Fix
