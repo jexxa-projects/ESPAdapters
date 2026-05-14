@@ -29,7 +29,7 @@
         </dependency>
 
         <dependency>
-            <groupId>io.jexxa.esp</groupId>
+            <groupId>io.jexxa.adapters</groupId>
             <artifactId>esp-adapters-core</artifactId>
             <version>${project.version}</version>
         </dependency>
