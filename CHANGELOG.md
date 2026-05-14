@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[2.0.0] - 2026-05-14
+### Changed
+- **Breaking Change (Coordinates)**: Unified Maven GroupIDs and ArtifactIDs to improve SBOM data quality and supply chain clarity.
+    - Parent: `io.jexxa:esp` -> `io.jexxa:adapters`
+    - Modules now inherit the base GroupID `io.jexxa`.
+- **Compliance**: Updated SBOM generation to **CycloneDX Schema 1.6** for BSI TR-03183-2 compliance.
+
+### Fix
+- *(java)* Bump io.jexxa.adapters:common-adapters to 4.1.0)
+- *(java)* Bump org.slf4j:slf4j-simple from 2.0.17 to 2.0.18 - ([91f1bdb](https://github.com/jexxa-projects/ESPAdapters/commit/91f1bdbbcaae865286abe60111287915d3f1a322))
+
 ## \[1.0.3] - 2026-04-24
 
 ### Fix

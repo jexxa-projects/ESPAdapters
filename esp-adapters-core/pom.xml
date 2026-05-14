@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>esp-adapters</artifactId>
-        <groupId>io.jexxa.esp</groupId>
-        <version>1.0.4-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <artifactId>esp-adapters</artifactId>
+        <groupId>io.jexxa.adapters</groupId>
+        <version>1.0.4-SNAPSHOT</version>
+    </parent>
+
     <artifactId>esp-adapters-core</artifactId>
+
+    <!-- Project Information -->
     <name>ESP-Adapters</name>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+    <url>https://github.com/jexxa-projects/ESPAdapters</url>
+    <description>Implementation of adpaters for event streaming and event stream processing for jexxa-projects.</description> <!-- Einzigartig -->
+
 
     <dependencies>
         <!-- Dependencies required for application -->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -31,9 +30,9 @@
             <version>${lz4.java.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.jexxa.common</groupId>
+            <groupId>io.jexxa.adapters</groupId>
             <artifactId>common-adapters</artifactId>
-            <version>${io.jexxa.common-adapters}</version>
+            <version>${jexxa.common.adapters.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -47,6 +46,12 @@
             </exclusions>
         </dependency>
         <!-- Confluent JSON Schema Serializer -->
+        <!-- Confluent JSON Schema Serde -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka.clients.version}</version> <!-- Version an Ihre Confluent-Plattform anpassen -->
+        </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-json-schema-serializer</artifactId>

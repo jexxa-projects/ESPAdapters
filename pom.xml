@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <name>ESPAdapters</name>
-  <groupId>io.jexxa.esp</groupId>
+
+  <organization>
+    <name>Jexxa Projects</name>
+    <url>https://github.com/jexxa-projects</url>
+  </organization>
+
+  <groupId>io.jexxa.adapters</groupId>
   <artifactId>esp-adapters</artifactId>
   <version>1.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <name>ESP Adapters (Parent)</name>
   <url>https://github.com/jexxa-projects/ESPAdapters</url>
+
   <description>ESPAdapters - Adapters for Event Stream Processing in Jexxa and JLegMed</description>
-  <scm>
-    <connection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</connection>
-    <url>https://github.com/jexxa-projects/ESPAdapters</url>
-    <developerConnection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</developerConnection>
-    <tag>esp-adapters-0.6.0</tag>
-  </scm>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -25,32 +28,42 @@
       <name>Michael Repplinger</name>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</connection>
+    <url>https://github.com/jexxa-projects/ESPAdapters</url>
+    <developerConnection>scm:git:https://github.com/jexxa-projects/ESPAdapters.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
   <properties>
+    <!-- target/compiler configuration  -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>25</maven.compiler.release>
 
       <!-- version of dependencies -->
     <slf4j.simple.version>2.0.18</slf4j.simple.version>
-    <io.jexxa.common-adapters>3.1.0</io.jexxa.common-adapters>
     <kafka.clients.version>8.2.0-ce</kafka.clients.version>
     <kafka.json.schema.serializer>8.2.0</kafka.json.schema.serializer>
     <apache.commons.lang3>3.20.0</apache.commons.lang3>
     <lz4.java.version>1.11.0</lz4.java.version>
-
+    <jexxa.common.adapters.version>4.1.0</jexxa.common.adapters.version>
     <!-- version of test dependencies -->
     <junit.platform.launcher.version>6.0.3</junit.platform.launcher.version>
     <junit.jupiter.engine.version>6.0.3</junit.jupiter.engine.version>
     <junit.jupiter.params.version>6.0.3</junit.jupiter.params.version>
 
-    <jlegmed.core.version>4.5.0</jlegmed.core.version>
     <classgraph.version>4.8.184</classgraph.version>
     <awaitility.version>4.3.0</awaitility.version>
     <unirest.java.version>3.14.5</unirest.java.version>
     <!-- server-name used in mavens settings.xml to find to your repository credentials -->
     <project.scm.id>github</project.scm.id>
+
     <!--information for filtered sources  -->
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssZ</maven.build.timestamp.format>
-    <!--version of  maven plugins  -->
+
+    <!--version of maven plugins  -->
     <gpg.plugin.version>3.2.8</gpg.plugin.version>
     <maven.clean.plugin>3.5.0</maven.clean.plugin>
     <maven.compiler.plugin>3.15.0</maven.compiler.plugin>
@@ -61,7 +74,7 @@
     <maven.resources.plugin>3.5.0</maven.resources.plugin>
     <maven.site.plugin>3.21.0</maven.site.plugin>
     <maven.surefire.plugin>3.5.5</maven.surefire.plugin>
-    <maven.release.plugin>3.0.0-M1</maven.release.plugin>
+    <maven.release.plugin>3.3.1</maven.release.plugin>
     <maven.jacoco.plugin>0.8.14</maven.jacoco.plugin>
     <maven.reports.plugin>3.9.0</maven.reports.plugin>
     <maven.enforcer.plugin>3.6.2</maven.enforcer.plugin>
@@ -72,13 +85,20 @@
     <maven.shade.plugin>3.6.0</maven.shade.plugin>
     <maven.exec.plugin>3.5.1</maven.exec.plugin>
     <maven.central.publishing.plugin>0.10.0</maven.central.publishing.plugin>
-    <maven.compiler.release>25</maven.compiler.release>
+    <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
+
+    <!-- sonar configuration  -->
+    <sonar.organization>jexxa-projects</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    <sonar.token>${sonar-login}</sonar.token>
+    <sonar.projectKey>jexxa-projects_ESPAdapters</sonar.projectKey>
+    <sonar.java.source>25</sonar.java.source>
+    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco-ut/jacoco.xml,target/site/jacoco-it/jacoco.xml </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.java.libraries>target</sonar.java.libraries>
+    <argLine>-Xmx2048m -Xms1024m</argLine>
+
   </properties>
-  <!-- ************************************************************************** -->
-  <!-- IMPORTANT: Change the following lines only if you are familiar with maven  -->
-  <!-- IMPORTANT: If you really need to adjust the following lines, please check      -->
-  <!-- IMPORTANT: if you should start your maven project.                         -->
-  <!-- ************************************************************************** -->
   <build>
     <pluginManagement>
       <!-- lock down plugins versions to avoid using Maven defaults -->
@@ -114,6 +134,11 @@
           <version>${maven.install.plugin}</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven.reports.plugin}</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven.deploy.plugin}</version>
           <configuration>
@@ -142,6 +167,46 @@
             <!--suppress UnresolvedMavenProperty -->
             <rulesUri>file:///${session.executionRootDirectory}/mavenVersionRules.xml</rulesUri>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <version>${cyclonedx.maven.plugin.version}</version>
+          <configuration>
+            <projectType>library</projectType>
+            <schemaVersion>1.6</schemaVersion>
+            <includeBomSerialNumber>true</includeBomSerialNumber>
+            <skipNotDeployed>false</skipNotDeployed>
+            <outputFormat>all</outputFormat>
+            <outputName>bom</outputName>
+            <includeBomSerialNumber>true</includeBomSerialNumber>
+            <includeCompileScope>true</includeCompileScope>
+            <includeProvidedScope>true</includeProvidedScope>
+            <includeRuntimeScope>true</includeRuntimeScope>
+            <includeSystemScope>true</includeSystemScope>
+            <includeTestScope>false</includeTestScope> <!-- KRITIS Fokus liegt auf Runtime-Sicherheit -->
+            <includeLicenseText>false</includeLicenseText> <!-- Nur Links/IDs für bessere Lesbarkeit -->
+            <outputFormat>all</outputFormat> <!-- Erzeugt JSON und XML -->
+            <outputName>bom</outputName>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven.javadoc.plugin.version}</version>
+          <configuration>
+            <!-- Erstellt die Doku über alle Module hinweg -->
+            <show>public</show>
+            <nohelp>true</nohelp>
+          </configuration>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -262,6 +327,15 @@
               <goal>jar</goal>
             </goals>
           </execution>
+          <!-- 2. Aggregiertes Javadoc nur im Root (Parent) -->
+          <execution>
+            <id>aggregate</id>
+            <inherited>false</inherited> <!-- WICHTIG: Nur im Parent ausführen -->
+            <goals>
+              <goal>aggregate-jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -329,9 +403,49 @@
           <autoPublish>true</autoPublish>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <!-- 'makeAggregateBom' ist ideal für deine Multi-Modul-Struktur -->
+              <goal>makeAggregateBom</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>sign-artifacts</id>
+      <activation>
+        <property>
+          <name>sign</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${gpg.plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>integrationTests</id>
       <activation>
