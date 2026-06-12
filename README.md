@@ -33,14 +33,14 @@ It provides templates and utilities for integrating event-driven architectures i
 <dependency>
     <groupId>io.jexxa.adapters</groupId>
     <artifactId>esp-adapters-core</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
 **Gradle:**
 
 ```groovy
-implementation "io.jexxa.adapters:esp-adapters-core:2.0.1"
+implementation "io.jexxa.adapters:esp-adapters-core:2.0.2"
 ```
 
 Once the dependency is added, `ESPAdapters` is ready to use — no local build required.
