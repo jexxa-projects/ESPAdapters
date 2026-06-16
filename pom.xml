@@ -84,7 +84,7 @@
     <maven.jib.plugin>3.4.6</maven.jib.plugin>
     <maven.shade.plugin>3.6.0</maven.shade.plugin>
     <maven.exec.plugin>3.5.1</maven.exec.plugin>
-    <maven.central.publishing.plugin>0.10.0</maven.central.publishing.plugin>
+    <maven.central.publishing.plugin>0.11.0</maven.central.publishing.plugin>
     <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
 
     <!-- sonar configuration  -->
