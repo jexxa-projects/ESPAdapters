@@ -85,7 +85,7 @@
     <maven.shade.plugin>3.6.0</maven.shade.plugin>
     <maven.exec.plugin>3.5.1</maven.exec.plugin>
     <maven.central.publishing.plugin>0.11.0</maven.central.publishing.plugin>
-    <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
+    <cyclonedx.maven.plugin.version>2.9.2</cyclonedx.maven.plugin.version>
 
     <!-- sonar configuration  -->
     <sonar.organization>jexxa-projects</sonar.organization>
