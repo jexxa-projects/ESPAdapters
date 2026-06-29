@@ -49,7 +49,7 @@
     <lz4.java.version>1.11.0</lz4.java.version>
     <jexxa.common.adapters.version>4.1.2</jexxa.common.adapters.version>
     <!-- version of test dependencies -->
-    <junit.platform.launcher.version>6.1.0</junit.platform.launcher.version>
+    <junit.platform.launcher.version>6.1.1</junit.platform.launcher.version>
     <junit.jupiter.engine.version>6.1.1</junit.jupiter.engine.version>
     <junit.jupiter.params.version>6.1.0</junit.jupiter.params.version>
 
