@@ -35,6 +35,10 @@
                     <groupId>org.apache.httpcomponents.core5</groupId>
                     <artifactId>httpcore5-h2</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.opentelemetry</groupId>
+                    <artifactId>opentelemetry-api</artifactId>
+                 </exclusion>
             </exclusions>
         </dependency>
 
@@ -44,7 +48,12 @@
             <version>5.3.6</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>1.63.0</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>io.jexxa.adapters</groupId>
             <artifactId>esp-adapters-core</artifactId>
