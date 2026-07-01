@@ -33,12 +33,12 @@ public abstract class TypedEventListener<K, V> implements EventListener {
     }
     protected abstract void onEvent(V value);
 
-    protected void onEvent(K key, V value)
+    protected void onEvent(K ignoredKey, V value)
     {
         onEvent(value);
     }
 
-    protected void onEvent(K key, V value, Headers headers)
+    protected void onEvent(K key, V value, Headers ignoredHeaders)
     {
         onEvent(key, value);
     }
