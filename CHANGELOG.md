@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[2.0.4] - 2026-07-01
+- *(CI)* Bump actions/checkout from 6 to 7 - ([03b9009](https://github.com/jexxa-projects/ESPAdapters/commit/03b900936590963ba68dfb77c5743b95f5068f15))
+- *(java)* Bump org.sonatype.central:central-publishing-maven-plugin - ([7613803](https://github.com/jexxa-projects/ESPAdapters/commit/761380367c6dbfdc69fe61fa39c6ca24cafec898))
+- *(java)* Bump kafka.clients.version from 8.2.1-ce to 8.3.0-ce - ([038f28f](https://github.com/jexxa-projects/ESPAdapters/commit/038f28f2ac25c1261264100aaf974cb3aa22d46a))
+- *(java)* Bump org.cyclonedx:cyclonedx-maven-plugin - ([5c98aa0](https://github.com/jexxa-projects/ESPAdapters/commit/5c98aa056bc3c53775f2ebdade32270066d4c1eb))
+- *(java)* Bump io.confluent:kafka-json-schema-serializer - ([060eabd](https://github.com/jexxa-projects/ESPAdapters/commit/060eabd9b0d6b517842d1b48c3e16b9aaa7ca959))
+- *(java)* Bump org.junit.jupiter:junit-jupiter-engine - ([4778ed9](https://github.com/jexxa-projects/ESPAdapters/commit/4778ed93367b0c2ba9f13c185cf66f256ac29189))
+- *(java)* Bump org.junit.platform:junit-platform-launcher - ([9319346](https://github.com/jexxa-projects/ESPAdapters/commit/93193467da9c3972f4f6c93a580e903996fb010a))
+- *(java)* Bump org.junit.jupiter:junit-jupiter-params - ([e617e5d](https://github.com/jexxa-projects/ESPAdapters/commit/e617e5d074763c3aa3d1c912872af29780c772ec))
+- *(java)* Bump io.jexxa.adapters:common-adapters from 4.1.2 to 4.1.3 - ([61ccbaa](https://github.com/jexxa-projects/ESPAdapters/commit/61ccbaa6fe2e334cf96e97c1b7c1793829609c97))
+
 ## \[2.0.2] - 2026-06-12
 ### 🤖 Dependencies
 
