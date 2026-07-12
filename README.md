@@ -1,6 +1,6 @@
 
 [![Maven Test Build](https://github.com/jexxa-projects/ESPAdapters/actions/workflows/mavenBuild.yml/badge.svg)](https://github.com/jexxa-projects/ESPAdapters/actions/workflows/mavenBuild.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/io.jexxa.esp/esp-adapters)](https://maven-badges.herokuapp.com/maven-central/io.jexxa.esp/esp-adapters/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.jexxa.adapters/esp-adapters)](https://maven-badges.herokuapp.com/maven-central/io.jexxa.adapters/esp-adapters/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # ESPAdapters
@@ -33,14 +33,14 @@ It provides templates and utilities for integrating event-driven architectures i
 <dependency>
     <groupId>io.jexxa.adapters</groupId>
     <artifactId>esp-adapters-core</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.3</version>
 </dependency>
 ```
 
 **Gradle:**
 
 ```groovy
-implementation "io.jexxa.adapters:esp-adapters-core:2.0.5"
+implementation "io.jexxa.adapters:esp-adapters-core:2.0.3"
 ```
 
 Once the dependency is added, `ESPAdapters` is ready to use — no local build required.

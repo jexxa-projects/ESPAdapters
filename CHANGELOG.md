@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## \[2.0.5] - 2026-07-12
+## \[2.0.3] - 2026-07-12
 ### Fix 
 - *(CI)* Bump actions/checkout from 6 to 7 - ([03b9009](https://github.com/jexxa-projects/ESPAdapters/commit/03b900936590963ba68dfb77c5743b95f5068f15))
 - *(java)* Bump org.sonatype.central:central-publishing-maven-plugin - ([7613803](https://github.com/jexxa-projects/ESPAdapters/commit/761380367c6dbfdc69fe61fa39c6ca24cafec898))
@@ -25,8 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - *(java)* Bump org.junit.jupiter:junit-jupiter-engine - ([501b435](https://github.com/jexxa-projects/ESPAdapters/commit/501b435939d457172bf77704a2dfab6fb2cabedb))
 - *(java)* Bump org.junit.jupiter:junit-jupiter-params ([#104](https://github.com/jexxa-projects/ESPAdapters/issues/104)) - ([d0d6270](https://github.com/jexxa-projects/ESPAdapters/commit/d0d627019d126d5e143c25d8b366eeb73d777338))
 - *(java)* Bump org.junit.platform:junit-platform-launcher ([#101](https://github.com/jexxa-projects/ESPAdapters/issues/101)) - ([da3f376](https://github.com/jexxa-projects/ESPAdapters/commit/da3f376d56d50e5900ed84a2fd80739f7f85cc64))
-
-## \[2.0.4] - 2026-07-01
 - *(CI)* Bump actions/checkout from 6 to 7 - ([03b9009](https://github.com/jexxa-projects/ESPAdapters/commit/03b900936590963ba68dfb77c5743b95f5068f15))
 - *(java)* Bump org.sonatype.central:central-publishing-maven-plugin - ([7613803](https://github.com/jexxa-projects/ESPAdapters/commit/761380367c6dbfdc69fe61fa39c6ca24cafec898))
 - *(java)* Bump kafka.clients.version from 8.2.1-ce to 8.3.0-ce - ([038f28f](https://github.com/jexxa-projects/ESPAdapters/commit/038f28f2ac25c1261264100aaf974cb3aa22d46a))
