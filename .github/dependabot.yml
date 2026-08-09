@@ -11,7 +11,9 @@ updates:
     commit-message:
       # Conventional Commit prefix
       prefix: "deps(java)"
-
+    cooldown: ## we trust ourselves ;-)
+      exclude:
+        - "io.jexxa.*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
