@@ -6,6 +6,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[2.0.4] - 2026-08-10
+### Fix
+
+- *(java)* Bump org.apache.maven.plugins:maven-jar-plugin - ([5a5fa6d](https://github.com/jexxa-projects/ESPAdapters/commit/5a5fa6d326b61a66a9bc76c289f75dc57014d375))
+- *(java)* Bump io.github.classgraph:classgraph from 4.8.184 to 4.8.185 - ([91ac6c8](https://github.com/jexxa-projects/ESPAdapters/commit/91ac6c869db69d68bb885cf5778db298927acf35))
+- *(java)* Bump io.github.classgraph:classgraph from 4.8.185 to 4.8.186 - ([073c188](https://github.com/jexxa-projects/ESPAdapters/commit/073c1889e61371df09efb9f65bc0de1c0749e935))
+- *(java)* Bump org.cyclonedx:cyclonedx-maven-plugin - ([22ce126](https://github.com/jexxa-projects/ESPAdapters/commit/22ce126349ecd8e5f360454d615ab9cef861353b))
+- *(java)* Bump kafka.clients.version from 8.3.0-ce to 8.3.1-ce - ([8573650](https://github.com/jexxa-projects/ESPAdapters/commit/85736500cbe5777bb92f072dd2bc430aa5f4303e))
+- *(java)* Bump io.confluent:kafka-json-schema-serializer ([#110](https://github.com/jexxa-projects/ESPAdapters/issues/110)) - ([a4a23dc](https://github.com/jexxa-projects/ESPAdapters/commit/a4a23dcf7ba2b565166ef7cb5ea68106e78a2499))
+- *(java)* Bump io.github.classgraph:classgraph from 4.8.186 to 4.8.189 - ([a5c8780](https://github.com/jexxa-projects/ESPAdapters/commit/a5c8780672f3971260e298acb8ad4dd1695f947e))
+- *(java)* Bump io.jexxa.adapters:common-adapters from 4.1.4 to 4.1.5 - ([5122dce](https://github.com/jexxa-projects/ESPAdapters/commit/5122dceeafe15e5b4b7b66ec7a336370dc557793))
+- *(java)* Bump org.junit.platform:junit-platform-launcher - ([f02e430](https://github.com/jexxa-projects/ESPAdapters/commit/f02e430dcc56d0af7810fc5fc2813309d84e8c1f))
+- *(java)* Bump org.junit.jupiter:junit-jupiter-params - ([adedbb5](https://github.com/jexxa-projects/ESPAdapters/commit/adedbb5e35cf20a950e36b9945317a2a57ac3191))
+- *(java)* Bump io.opentelemetry:opentelemetry-api - ([1a02e38](https://github.com/jexxa-projects/ESPAdapters/commit/1a02e38606e6c40ac2765f2e753ace90b294d755))
+- *(java)* Bump at.yawk.lz4:lz4-java from 1.11.1 to 1.11.2 - ([685a3d6](https://github.com/jexxa-projects/ESPAdapters/commit/685a3d6970c4512d33f413fe8a38628199319d47))
+- *(java)* Bump org.junit.jupiter:junit-jupiter-engine - ([8e01185](https://github.com/jexxa-projects/ESPAdapters/commit/8e011855964e148373f2bba624407304ca7ce457))
 
 ## \[2.0.3] - 2026-07-12
 ### Fix 
