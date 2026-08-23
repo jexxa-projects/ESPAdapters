@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## \[2.0.5] - 2026-08-23
+### Fix
+
+- *(java)* Bump io.github.classgraph:classgraph from 4.8.189 to 4.8.190 - ([0ce46c9](https://github.com/jexxa-projects/ESPAdapters/commit/0ce46c9f3a3cabf3fb5ddf4eb174ac11c32e908a))
+- *(java)* Bump io.github.classgraph:classgraph from 4.8.190 to 4.8.192 - ([2ebbf37](https://github.com/jexxa-projects/ESPAdapters/commit/2ebbf370f01e2a2d382df87e45cb85fd2c2c0a18))
+- *(java)* Bump io.github.classgraph:classgraph from 4.8.192 to 4.8.193 - ([644be62](https://github.com/jexxa-projects/ESPAdapters/commit/644be625ebd181557b54ecd5985b70b3aa13f7e3))
+- *(java)* Bump io.jexxa.adapters:common-adapters from 4.1.5 to 4.1.6 - ([4c632f8](https://github.com/jexxa-projects/ESPAdapters/commit/4c632f84266bfd55e2c8d76ace222de8f1a3423d))
+
 ## \[2.0.4] - 2026-08-10
 ### Fix
 
