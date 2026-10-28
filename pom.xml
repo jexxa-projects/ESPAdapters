@@ -43,7 +43,7 @@
 
       <!-- version of dependencies -->
     <slf4j.simple.version>2.0.20</slf4j.simple.version>
-    <kafka.json.schema.serializer>8.3.2</kafka.json.schema.serializer>
+    <kafka.json.schema.serializer>8.4.0</kafka.json.schema.serializer>
     <kafka.clients.version>8.4.0-ce</kafka.clients.version>
     <apache.commons.lang3>3.21.0</apache.commons.lang3>
     <lz4.java.version>1.12.1</lz4.java.version>
